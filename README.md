@@ -28,25 +28,24 @@ normales, extras y salario según la lógica oficial de Brighter.
 
 ```
 PROYECTO-Brighter-WorkLog/
-├── app/
-│   ├── index.html          # estructura de la página
-│   ├── css/
-│   │   └── styles.css       # todos los estilos
-│   └── js/
-│       ├── config.js        # constantes, config por defecto y estado global
-│       ├── utils.js         # utilidades de tiempo y formato
-│       ├── storage.js       # guardado/carga en localStorage
-│       ├── calc.js          # motor de cálculo (día y meta)
-│       ├── render.js        # generar mes, pintar tabla y editar celdas
-│       ├── settings.js      # modal de ajustes avanzados
-│       └── app.js           # arranque e inicialización
+├── index.html           # estructura de la página
+├── css/
+│   └── styles.css       # todos los estilos
+├── js/
+│   ├── config.js        # constantes, config por defecto y estado global
+│   ├── utils.js         # utilidades de tiempo y formato
+│   ├── storage.js       # guardado/carga en localStorage
+│   ├── calc.js          # motor de cálculo (día y meta)
+│   ├── render.js        # generar mes, pintar tabla y editar celdas
+│   ├── settings.js      # modal de ajustes avanzados
+│   └── app.js           # arranque e inicialización
 ├── README.md
 └── .gitignore
 ```
 
 ## Uso
 
-Abrir `app/index.html` en el navegador (doble clic). No requiere instalación ni servidor.
+Abrir `index.html` en el navegador (doble clic). No requiere instalación ni servidor.
 Los datos se guardan en el navegador (localStorage) del equipo donde se usa.
 
 ## Lógica de cálculo

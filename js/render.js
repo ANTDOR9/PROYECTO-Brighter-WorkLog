@@ -1,5 +1,7 @@
 /* ================= render.js =================
-   Generación del mes, pintado de la tabla y edición de celdas.
+   Generación del mes y pintado del MODO ESCRITORIO (tabla).
+   El calendario carrusel vive en carousel.js.
+   refrescar() re-pinta ambos modos y los resúmenes, y guarda.
 ============================================================ */
 "use strict";
 
@@ -8,6 +10,9 @@ function generarMes(preferGuardado){
   estado.empleado = document.getElementById("fEmpleado").value;
   estado.mes      = +document.getElementById("fMes").value;
   estado.anio     = +document.getElementById("fAnio").value;
+
+  // feriados del año (nacionales + Semana Santa + Arequipa opcional)
+  estado.feriados = feriadosPeru(estado.anio, cfg.feriadosArequipa);
 
   let guardado = null;
   if(preferGuardado && estado.empleado.trim()){
@@ -26,14 +31,22 @@ function generarMes(preferGuardado){
       ent:  g.ent  || "", sal:  g.sal  || "",
       ent2: g.ent2 || "", sal2: g.sal2 || "",
       extraManual: (g.extraManual !== undefined ? g.extraManual : null), // null = usar sugerido
-      baja: g.baja || "", desc: g.desc || ""
+      baja: g.baja || "", desc: g.desc || "", nota: g.nota || ""
     });
   }
-  render();
+  refrescar();
 }
 
-/** pinta toda la tabla y los paneles de resumen */
-function render(){
+/** re-pinta todo (tabla + calendario + resúmenes) y guarda */
+function refrescar(){
+  renderTabla();
+  if(typeof renderCalendario === "function") renderCalendario();
+  renderResumenLateral();
+  saveEstado();
+}
+
+/* ---------- MODO ESCRITORIO: tabla ---------- */
+function renderTabla(){
   document.getElementById("tblTitulo").textContent =
     "Resumen de horas — " + (estado.empleado.trim() || "(sin nombre)") +
     " · " + MESES[estado.mes] + " " + estado.anio;
@@ -42,17 +55,15 @@ function render(){
 
   const tb = document.getElementById("tbody");
   tb.innerHTML = "";
-  let sT=0, sN=0, sE=0, sB=0, sTot=0, bal=0, meta=0;
 
   estado.dias.forEach((d, idx) => {
     const c = calcDia(d);
     const t = tipoDia(d);
-    bal  += c.balanceDia;
-    meta += c.meta;
-    sT += c.trab; sN += c.normales; sE += c.extra; sB += c.baja; sTot += c.total;
+    const fer = nombreFeriado(d);
 
     const tr = document.createElement("tr");
     tr.className = (t === "domingo" ? "domingo" : t === "feriado" ? "feriado" : t === "sabado" ? "sabado" : "");
+    if(d.dow === 1 && idx !== 0) tr.className += " semana-inicio";   // separación entre semanas
     if(c.extra > 0) tr.className += " tiene-extra";
     if(c.baja  > 0) tr.className += " tiene-baja";
 
@@ -62,6 +73,7 @@ function render(){
 
     const balCls   = c.balanceDia > 0.0001 ? "bal-pos" : (c.balanceDia < -0.0001 ? "bal-neg" : "muted-num");
     const extraCls = (d.extraManual != null) ? "calc" : "muted-num";
+    const descVal  = fer ? fer : (d.desc || "");
 
     tr.innerHTML = `
       <td class="col-dia">${DIAS[d.dow]}</td>
@@ -77,44 +89,46 @@ function render(){
            placeholder="${c.extraSug > 0 ? fmt(c.extraSug) : "0.00"}" ${editable ? "" : "disabled"}
            title="Sugerido: ${fmt(c.extraSug)}"></td>
       <td class="col-baja"><input class="cellinput" data-i="${idx}" data-f="baja" value="${d.baja || ""}" placeholder="0.00" ${editable ? "" : "disabled"}></td>
-      <td><input class="cellinput descinput" data-i="${idx}" data-f="desc" value="${(d.desc || "").replace(/"/g,'&quot;')}" placeholder="—"></td>
+      <td><input class="cellinput descinput" data-i="${idx}" data-f="desc" value="${descVal.replace(/"/g,'&quot;')}" placeholder="—" ${fer ? "readonly title='Feriado automático'" : ""}></td>
       <td class="calc">${fmt(c.total)}</td>
       <td class="${balCls}">${c.valido && c.meta > 0 ? (c.balanceDia >= 0 ? "+" : "") + fmt(c.balanceDia) : "—"}</td>`;
     tb.appendChild(tr);
   });
 
-  // pie de tabla
-  document.getElementById("tTrab").textContent  = fmt(sT);
-  document.getElementById("tNorm").textContent  = fmt(sN);
-  document.getElementById("tExtra").textContent = fmt(sE);
-  document.getElementById("tBaja").textContent  = fmt(sB);
-  document.getElementById("tTotal").textContent = fmt(sTot);
+  const m = calcMes();
+  document.getElementById("tTrab").textContent  = fmt(m.trab);
+  document.getElementById("tNorm").textContent  = fmt(m.normales);
+  document.getElementById("tExtra").textContent = fmt(m.extras);
+  document.getElementById("tBaja").textContent  = fmt(m.baja);
+  document.getElementById("tTotal").textContent = fmt(m.total);
   const tBal = document.getElementById("tBal");
-  tBal.textContent = (bal >= 0 ? "+" : "") + fmt(bal);
-  tBal.className = bal > 0.0001 ? "bal-pos" : (bal < -0.0001 ? "bal-neg" : "muted-num");
-
-  // panel derecho
-  document.getElementById("kHoras").textContent = fmt(sT);
-  document.getElementById("kMeta").textContent  = fmt(meta);
-  document.getElementById("kNorm").textContent  = fmt(sN);
-  document.getElementById("kExtra").textContent = fmt(sE);
-  document.getElementById("kBaja").textContent  = fmt(sB);
-  const kBal = document.getElementById("kBal");
-  kBal.textContent = (bal >= 0 ? "+" : "") + fmt(bal);
-  kBal.style.color = bal > 0.0001 ? "var(--pos)" : (bal < -0.0001 ? "var(--neg)" : "var(--muted)");
-
-  const bm = document.getElementById("balMsg");
-  if(bal > 0.0001)      bm.innerHTML = `Hay <b>${fmt(bal)} h</b> de exceso acumulado → se pagarán como extra al cerrar el mes.`;
-  else if(bal < -0.0001) bm.innerHTML = `Faltan <b>${fmt(-bal)} h</b> para cubrir la meta del mes.`;
-  else                   bm.textContent = "Las horas trabajadas cubren exactamente la meta.";
+  tBal.textContent = (m.balance >= 0 ? "+" : "") + fmt(m.balance);
+  tBal.className = m.balance > 0.0001 ? "bal-pos" : (m.balance < -0.0001 ? "bal-neg" : "muted-num");
 
   bindInputs();
-  saveEstado();
 }
 
-/* ---------- edición de celdas ---------- */
+/* ---------- resumen lateral (compartido) ---------- */
+function renderResumenLateral(){
+  const m = calcMes();
+  document.getElementById("kHoras").textContent = fmt(m.trab);
+  document.getElementById("kMeta").textContent  = fmt(m.meta);
+  document.getElementById("kNorm").textContent  = fmt(m.normales);
+  document.getElementById("kExtra").textContent = fmt(m.extras);
+  document.getElementById("kBaja").textContent  = fmt(m.baja);
+  const kBal = document.getElementById("kBal");
+  kBal.textContent = (m.balance >= 0 ? "+" : "") + fmt(m.balance);
+  kBal.style.color = m.balance > 0.0001 ? "var(--pos)" : (m.balance < -0.0001 ? "var(--neg)" : "var(--muted)");
+
+  const bm = document.getElementById("balMsg");
+  if(m.balance > 0.0001)      bm.innerHTML = `Hay <b>${fmt(m.balance)} h</b> de exceso acumulado → se pagarán como extra al cerrar el mes.`;
+  else if(m.balance < -0.0001) bm.innerHTML = `Faltan <b>${fmt(-m.balance)} h</b> para cubrir la meta del mes.`;
+  else                         bm.textContent = "Las horas trabajadas cubren exactamente la meta.";
+}
+
+/* ---------- edición de celdas (tabla) ---------- */
 function bindInputs(){
-  document.querySelectorAll(".cellinput").forEach(inp => {
+  document.querySelectorAll("#tbody .cellinput").forEach(inp => {
     inp.addEventListener("change", onEdit);
     if(["ent","sal","ent2","sal2"].includes(inp.dataset.f)){
       inp.addEventListener("blur", e => { e.target.value = normHora(e.target.value); });
@@ -122,19 +136,24 @@ function bindInputs(){
   });
 }
 
-function onEdit(e){
-  const i = +e.target.dataset.i, f = e.target.dataset.f;
+/** aplica una edición al día `i`, campo `f`, valor `v` (usado por tabla y calendario) */
+function aplicarEdicion(i, f, v){
   const d = estado.dias[i];
-  const v = e.target.value;
   if(["ent","sal","ent2","sal2"].includes(f)){
     d[f] = normHora(v);
   } else if(f === "extra"){
-    if(v.trim() === "") d.extraManual = null;                 // vacío → volver a sugerido
-    else { const n = parseFloat(v.replace(",",".")); d.extraManual = isNaN(n) ? null : n; }
+    if(String(v).trim() === "") d.extraManual = null;                 // vacío → volver a sugerido
+    else { const n = parseFloat(String(v).replace(",",".")); d.extraManual = isNaN(n) ? null : n; }
   } else if(f === "baja"){
-    const n = parseFloat(v.replace(",",".")); d.baja = isNaN(n) ? "" : n;
+    const n = parseFloat(String(v).replace(",",".")); d.baja = isNaN(n) ? "" : n;
   } else if(f === "desc"){
     d.desc = v;
+  } else if(f === "nota"){
+    d.nota = v;
   }
-  render();
+}
+
+function onEdit(e){
+  aplicarEdicion(+e.target.dataset.i, e.target.dataset.f, e.target.value);
+  refrescar();
 }

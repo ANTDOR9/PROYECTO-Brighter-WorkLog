@@ -1,10 +1,10 @@
 /* ================= settings.js =================
-   Modal de "Ajustes avanzados": días laborables, topes y media jornada.
+   Modal de "Ajustes avanzados": días laborables, topes, media jornada,
+   tolerancia de extras y feriados regionales de Arequipa.
 ============================================================ */
 "use strict";
 
 function abrirConfig(){
-  // botones de días de la semana (orden Lun..Dom)
   const cont = document.getElementById("diasSemana");
   cont.innerHTML = "";
   [1,2,3,4,5,6,0].forEach(dw => {
@@ -17,7 +17,6 @@ function abrirConfig(){
     cont.appendChild(b);
   });
 
-  // selector de día de media jornada
   const sel = document.getElementById("cDiaMedio");
   sel.innerHTML = "";
   [1,2,3,4,5,6,0].forEach(dw => {
@@ -29,16 +28,22 @@ function abrirConfig(){
 
   document.getElementById("cTopeCompleto").value = cfg.topeCompleto;
   document.getElementById("cTopeMedio").value    = cfg.topeMedio;
+  document.getElementById("cTolerancia").value   = cfg.toleranciaExtraMin || 0;
+  document.getElementById("cArequipa").checked   = !!cfg.feriadosArequipa;
   document.getElementById("dlgConfig").showModal();
 }
 
 function guardarConfig(){
   const dias = [...document.querySelectorAll("#diasSemana button.primary")].map(b => +b.dataset.dw);
-  cfg.diasLaborables = dias.length ? dias : [1,2,3,4,5,6];
-  cfg.diaMedio      = +document.getElementById("cDiaMedio").value;
-  cfg.topeCompleto  = parseFloat(document.getElementById("cTopeCompleto").value) || 8.5;
-  cfg.topeMedio     = parseFloat(document.getElementById("cTopeMedio").value)    || 5.5;
+  cfg.diasLaborables    = dias.length ? dias : [1,2,3,4,5,6];
+  cfg.diaMedio          = +document.getElementById("cDiaMedio").value;
+  cfg.topeCompleto      = parseFloat(document.getElementById("cTopeCompleto").value) || 8.5;
+  cfg.topeMedio         = parseFloat(document.getElementById("cTopeMedio").value)    || 5.5;
+  cfg.toleranciaExtraMin= parseFloat(document.getElementById("cTolerancia").value)   || 0;
+  cfg.feriadosArequipa  = document.getElementById("cArequipa").checked;
   saveCfg();
   document.getElementById("dlgConfig").close();
-  render();
+  // recalcular feriados del año por si cambió lo de Arequipa
+  estado.feriados = feriadosPeru(estado.anio, cfg.feriadosArequipa);
+  refrescar();
 }

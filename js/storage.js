@@ -34,7 +34,7 @@ function saveEstado(){
       empleado: estado.empleado, mes: estado.mes, anio: estado.anio,
       dias: estado.dias.map(d => ({
         ent:d.ent, sal:d.sal, ent2:d.ent2, sal2:d.sal2,
-        extraManual:d.extraManual, baja:d.baja, desc:d.desc
+        extraManual:d.extraManual, baja:d.baja, desc:d.desc, nota:d.nota
       }))
     };
     localStorage.setItem(LS_DATA, JSON.stringify(all));

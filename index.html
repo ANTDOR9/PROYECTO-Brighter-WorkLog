@@ -4,139 +4,168 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brighter WorkLog — Registro de Horas</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+<!-- ===== Fondo con efecto vidrio ===== -->
+<div class="bg">
+  <div class="bg-grad"></div>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
 <div class="app">
 
-  <div class="topbar">
-    <div class="logo">B</div>
+  <!-- ===== Encabezado ===== -->
+  <div class="topbar glass">
+    <img class="logo-img" src="assets/logo.png" alt="Brighter">
     <div class="title">
       <h1>Brighter WorkLog</h1>
       <p>Registro de horas y cálculo de pago · Brighter Perú S.A.C.</p>
     </div>
     <div class="spacer"></div>
-    <span class="badge-fase">Fase 1 · Motor + tabla</span>
+    <div class="segmented" id="segModo">
+      <button data-modo="calendario" class="on">Calendario</button>
+      <button data-modo="escritorio">Escritorio</button>
+    </div>
+    <button class="ghost" id="btnConfig">⚙ Ajustes</button>
   </div>
 
-  <div class="grid">
-    <!-- ============ IZQUIERDA ============ -->
-    <div>
-      <div class="panel" style="margin-bottom:16px">
-        <div class="panel-h">
-          <h2>Datos del registro</h2>
-          <div class="spacer"></div>
-          <button class="ghost" id="btnConfig">⚙ Ajustes avanzados</button>
+  <!-- ===== Datos del registro (compartido) ===== -->
+  <div class="panel glass" style="margin-bottom:16px">
+    <div class="panel-b">
+      <div class="row">
+        <div class="field">
+          <label>Empleado(a)</label>
+          <input id="fEmpleado" type="text" placeholder="Nombre y apellidos" style="min-width:220px">
         </div>
-        <div class="panel-b">
-          <div class="row">
-            <div class="field">
-              <label>Empleado(a)</label>
-              <input id="fEmpleado" type="text" placeholder="Nombre y apellidos" style="min-width:220px">
-            </div>
-            <div class="field">
-              <label>Mes</label>
-              <select id="fMes"></select>
-            </div>
-            <div class="field">
-              <label>Año</label>
-              <input id="fAnio" type="number" min="2020" max="2100" step="1" style="min-width:90px">
-            </div>
-            <div class="field">
-              <label>&nbsp;</label>
-              <button class="primary" id="btnGenerar">Generar mes</button>
-            </div>
-          </div>
-          <div class="hint">Se generan los días laborables según los <b>Ajustes avanzados</b> (por defecto lunes a sábado). Los domingos y feriados no cuentan horas.</div>
+        <div class="field">
+          <label>Mes</label>
+          <select id="fMes"></select>
         </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-h">
-          <h2 id="tblTitulo">Resumen de horas</h2>
-          <div class="spacer"></div>
-          <span class="savednote" id="savedNote"></span>
+        <div class="field">
+          <label>Año</label>
+          <input id="fAnio" type="number" min="2020" max="2100" step="1" style="min-width:90px">
         </div>
-        <div class="panel-b" style="padding:10px">
-          <div class="tablewrap">
-            <table id="tabla">
-              <thead>
-                <tr>
-                  <th class="col-dia" style="text-align:left">Día</th>
-                  <th>Fecha</th>
-                  <th>Entrada</th>
-                  <th>Salida</th>
-                  <th>Entrada 2</th>
-                  <th>Salida 2</th>
-                  <th>H. Trab.</th>
-                  <th>H. Normales</th>
-                  <th>H. Extras</th>
-                  <th>H. Baja</th>
-                  <th>Descripción</th>
-                  <th>Total</th>
-                  <th>Balance</th>
-                </tr>
-              </thead>
-              <tbody id="tbody"></tbody>
-              <tfoot>
-                <tr>
-                  <td class="lbl" colspan="6">Totales del mes</td>
-                  <td class="calc" id="tTrab">0.00</td>
-                  <td class="calc" id="tNorm">0.00</td>
-                  <td class="calc" id="tExtra">0.00</td>
-                  <td class="calc" id="tBaja">0.00</td>
-                  <td></td>
-                  <td class="calc" id="tTotal">0.00</td>
-                  <td id="tBal">—</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-          <div class="hint">Haz clic en cualquier celda de hora para editarla. Las <b>Horas Extras</b> se sugieren solas pero puedes corregirlas a mano (se marcan en verde si las editas).</div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="primary" id="btnGenerar">Generar mes</button>
         </div>
-      </div>
-    </div>
-
-    <!-- ============ DERECHA ============ -->
-    <div>
-      <div class="panel" style="margin-bottom:16px">
-        <div class="panel-h"><h2>Resumen</h2></div>
-        <div class="panel-b">
-          <div class="kpi"><div class="n" id="kHoras">0.00</div><div class="l">Horas trabajadas del mes</div></div>
-          <div class="kv"><span>Meta del mes</span><span class="v" id="kMeta">0.00</span></div>
-          <div class="kv"><span>Horas normales</span><span class="v" id="kNorm">0.00</span></div>
-          <div class="kv"><span>Horas extras</span><span class="v" id="kExtra">0.00</span></div>
-          <div class="kv"><span>Horas de baja</span><span class="v" id="kBaja">0.00</span></div>
-          <div class="kv"><span>Balance acumulado</span><span class="v" id="kBal">0.00</span></div>
-          <div class="hint" id="balMsg"></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-h"><h2>Cómo se contabiliza</h2></div>
-        <div class="panel-b">
-          <ul class="logic" style="padding-left:18px;margin:0 0 10px">
-            <li><b>Horas trabajadas</b> = (Salida − Entrada) + (Salida 2 − Entrada 2). El almuerzo entre turnos <b>no se paga</b>.</li>
-            <li><b>Meta del día</b>: <span id="lTopeD">8.50</span> h de lunes a viernes, <span id="lTopeS">5.50</span> h el sábado, 0 en domingo/feriado.</li>
-            <li><b>Horas normales</b> = lo trabajado hasta la meta del día.</li>
-            <li><b>Horas extras</b> = lo que excede la meta (sugerido, editable).</li>
-            <li><b>Compensación mensual</b>: los excesos de unos días cubren las faltas de otros. El <b>balance</b> muestra ese acumulado y el neto se salda al cerrar el mes (Fase 2).</li>
-          </ul>
-          <div class="legend">
-            <span class="chip s">Sábado ½</span>
-            <span class="chip d">Domingo</span>
-            <span class="chip f">Feriado</span>
-            <span class="chip e">Con extras</span>
-            <span class="chip b">Baja</span>
-          </div>
-          <details class="logic" style="margin-top:12px">
-            <summary>Marcar día como feriado</summary>
-            <div class="hint">Escribe <b>FERIADO</b> en la columna Descripción de ese día. Los domingos se marcan solos.</div>
-          </details>
-        </div>
+        <div class="spacer"></div>
+        <span class="savednote" id="savedNote"></span>
       </div>
     </div>
   </div>
+
+  <!-- ============================================================ -->
+  <!-- ===== MODO CALENDARIO ===== -->
+  <!-- ============================================================ -->
+  <section id="vistaCalendario" class="vista">
+    <div class="pull-hint" id="pullHint">
+      <div class="pull-bar"></div>
+      <span>Arrastra hacia abajo para ver la tabla</span>
+    </div>
+
+    <div class="cal-head">
+      <h2 id="calTitulo">Calendario</h2>
+      <div class="cal-nav">
+        <button id="calPrev" aria-label="Anterior">‹</button>
+        <button id="calNext" aria-label="Siguiente">›</button>
+      </div>
+    </div>
+
+    <div class="cal-track" id="calTrack"></div>
+
+    <div class="toolbar glass">
+      <button class="btn-glass" onclick="exportarExcel()">⬇ Descargar Excel</button>
+      <button class="btn-glass" onclick="imprimir()">🖨 Imprimir</button>
+      <button class="btn-glass off" title="Disponible en la Fase 3" disabled>☁ Subir a Drive</button>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ===== MODO ESCRITORIO ===== -->
+  <!-- ============================================================ -->
+  <section id="vistaEscritorio" class="vista oculto">
+    <div class="grid">
+      <div>
+        <div class="panel glass">
+          <div class="panel-h">
+            <h2 id="tblTitulo">Resumen de horas</h2>
+            <div class="spacer"></div>
+            <div class="toolbar-mini">
+              <button class="btn-glass sm" onclick="exportarExcel()">⬇ Excel</button>
+              <button class="btn-glass sm" onclick="imprimir()">🖨 Imprimir</button>
+            </div>
+          </div>
+          <div class="panel-b" style="padding:10px">
+            <div class="tablewrap">
+              <table id="tabla">
+                <thead>
+                  <tr>
+                    <th class="col-dia" style="text-align:left">Día</th>
+                    <th>Fecha</th><th>Entrada</th><th>Salida</th><th>Entrada 2</th><th>Salida 2</th>
+                    <th>H. Trab.</th><th>H. Normales</th><th>H. Extras</th><th>H. Baja</th>
+                    <th>Descripción</th><th>Total</th><th>Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+                <tfoot>
+                  <tr>
+                    <td class="lbl" colspan="6">Totales del mes</td>
+                    <td class="calc" id="tTrab">0.00</td>
+                    <td class="calc" id="tNorm">0.00</td>
+                    <td class="calc" id="tExtra">0.00</td>
+                    <td class="calc" id="tBaja">0.00</td>
+                    <td></td>
+                    <td class="calc" id="tTotal">0.00</td>
+                    <td id="tBal">—</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <div class="hint">Haz clic en cualquier celda para editarla. Los <b>feriados de Perú</b> se marcan solos (naranja). Las semanas se separan con una línea.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel glass" style="margin-bottom:16px">
+          <div class="panel-h"><h2>Resumen</h2></div>
+          <div class="panel-b">
+            <div class="kpi"><div class="n" id="kHoras">0.00</div><div class="l">Horas trabajadas del mes</div></div>
+            <div class="kv"><span>Meta del mes</span><span class="v" id="kMeta">0.00</span></div>
+            <div class="kv"><span>Horas normales</span><span class="v" id="kNorm">0.00</span></div>
+            <div class="kv"><span>Horas extras</span><span class="v" id="kExtra">0.00</span></div>
+            <div class="kv"><span>Horas de baja</span><span class="v" id="kBaja">0.00</span></div>
+            <div class="kv"><span>Balance acumulado</span><span class="v" id="kBal">0.00</span></div>
+            <div class="hint" id="balMsg"></div>
+          </div>
+        </div>
+
+        <div class="panel glass">
+          <div class="panel-h"><h2>Cómo se contabiliza</h2></div>
+          <div class="panel-b">
+            <ul class="logic" style="padding-left:18px;margin:0 0 10px">
+              <li><b>Horas trabajadas</b> = (Salida − Entrada) + (Salida 2 − Entrada 2). El almuerzo entre turnos <b>no se paga</b>.</li>
+              <li><b>Meta del día</b>: <span id="lTopeD">8.50</span> h lun–vie, <span id="lTopeS">5.50</span> h el sábado, 0 en domingo/feriado.</li>
+              <li><b>Horas normales</b> = lo trabajado hasta la meta del día.</li>
+              <li><b>Horas extras</b> = lo que excede la meta (sugerido, editable).</li>
+              <li><b>Compensación mensual</b>: los excesos cubren las faltas; el neto se salda al cerrar el mes.</li>
+            </ul>
+            <div class="legend">
+              <span class="chip s">Sábado ½</span><span class="chip d">Domingo</span>
+              <span class="chip f">Feriado</span><span class="chip e">Con extras</span><span class="chip b">Baja</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <!-- ===== Modal ajustes ===== -->
@@ -148,19 +177,16 @@
       <div id="diasSemana" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div>
     </div>
     <div class="row" style="margin-bottom:12px">
-      <div class="field">
-        <label>Meta día completo (h)</label>
-        <input id="cTopeCompleto" type="number" step="0.25" min="0">
-      </div>
-      <div class="field">
-        <label>Meta media jornada (h)</label>
-        <input id="cTopeMedio" type="number" step="0.25" min="0">
-      </div>
+      <div class="field"><label>Meta día completo (h)</label><input id="cTopeCompleto" type="number" step="0.25" min="0"></div>
+      <div class="field"><label>Meta media jornada (h)</label><input id="cTopeMedio" type="number" step="0.25" min="0"></div>
     </div>
-    <div class="field" style="margin-bottom:16px">
-      <label>Día de media jornada</label>
-      <select id="cDiaMedio"></select>
+    <div class="row" style="margin-bottom:12px">
+      <div class="field"><label>Día de media jornada</label><select id="cDiaMedio"></select></div>
+      <div class="field"><label>Tolerancia extra (min)</label><input id="cTolerancia" type="number" step="5" min="0" title="No cuenta como extra por debajo de estos minutos"></div>
     </div>
+    <label class="check" style="margin-bottom:16px;display:flex;gap:8px;align-items:center;cursor:pointer">
+      <input id="cArequipa" type="checkbox"> Incluir feriados regionales de Arequipa (15 ago)
+    </label>
     <div class="row" style="justify-content:flex-end">
       <button id="btnCerrarConfig">Cancelar</button>
       <button class="primary" id="btnGuardarConfig">Guardar ajustes</button>
@@ -171,9 +197,12 @@
 <!-- ===== Scripts (orden de dependencia) ===== -->
 <script src="js/config.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/holidays.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/calc.js"></script>
 <script src="js/render.js"></script>
+<script src="js/carousel.js"></script>
+<script src="js/export.js"></script>
 <script src="js/settings.js"></script>
 <script src="js/app.js"></script>
 </body>

@@ -1,123 +1,240 @@
 /* ================= Brighter WorkLog — estilos ================= */
 :root{
-  --bg:#f4f6f9; --panel:#ffffff; --ink:#1f2733; --muted:#6b7787;
-  --line:#e2e7ee; --line2:#eef1f6;
-  --brand:#0e5fb0; --brand-ink:#0b4a8a; --brand-soft:#e7f0fb;
-  --accent:#12a37f;
+  /* paleta de marca (del logo: ave origami + reloj) */
+  --brand:#f2611f;  --brand-ink:#c8480f;  --brand-soft:#fdeadf;
+  --teal:#16a97f;   --red:#e0261a;        --amber:#f5a623;
+  --ink:#1e2a3a;    --muted:#6b7787;      --panel:#ffffff;
+  --line:#e6ebf1;   --line2:#eef2f7;
+
   /* estados */
-  --domingo:#fdecec; --domingo-b:#e9a8a8;
-  --feriado:#fff3e0; --feriado-b:#f0c07a;
-  --sabado:#eaf3fb; --sabado-b:#a9cdee;
-  --extra:#e9f8f1; --extra-b:#8fdcc0;
-  --baja:#f1eef8; --baja-b:#c3b6e6;
-  --neg:#c0392b; --pos:#12a37f;
-  --shadow:0 1px 3px rgba(20,40,70,.06),0 8px 24px rgba(20,40,70,.06);
+  --domingo:#fdeceb; --domingo-b:#eaa9a4;
+  --feriado:#fff2e2; --feriado-b:#f2c281;
+  --sabado:#e7f6f0;  --sabado-b:#9adcc4;
+  --extra:#e9f8f1;   --extra-b:#8fdcc0;
+  --baja:#f1eef8;    --baja-b:#c3b6e6;
+  --neg:#c0392b;     --pos:#12a37f;
+
+  --glass-bg:rgba(255,255,255,.62);
+  --glass-bd:rgba(255,255,255,.55);
+  --shadow:0 1px 3px rgba(20,40,70,.06), 0 12px 34px rgba(20,40,70,.10);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  background:var(--bg); color:var(--ink); font-size:14px; line-height:1.45;
+  color:var(--ink); font-size:14px; line-height:1.45; min-height:100vh;
+  background:#f2efe9;
 }
-.app{max-width:1240px; margin:0 auto; padding:20px 20px 80px}
 
-/* ---- header ---- */
-.topbar{display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap}
-.logo{
-  width:42px;height:42px;border-radius:11px;flex:0 0 auto;
-  background:linear-gradient(135deg,var(--brand),#1478d0);
-  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;
+/* ===== Fondo con efecto vidrio ===== */
+.bg{position:fixed; inset:0; z-index:-1; overflow:hidden}
+.bg-grad{position:absolute; inset:0;
+  background:
+    radial-gradient(1200px 600px at 12% 8%, #ffe9d6 0%, transparent 55%),
+    radial-gradient(1000px 700px at 88% 12%, #d7f3e8 0%, transparent 55%),
+    radial-gradient(1000px 800px at 60% 100%, #ffe0d6 0%, transparent 55%),
+    linear-gradient(160deg,#fbf6f0,#eef4f2);
+}
+.blob{position:absolute; border-radius:50%; filter:blur(60px); opacity:.5}
+.blob.b1{width:420px;height:420px; background:#f5a06a; top:-80px; left:-60px}
+.blob.b2{width:380px;height:380px; background:#41c79e; top:40px; right:-80px}
+.blob.b3{width:460px;height:460px; background:#f2705a; bottom:-140px; left:30%}
+
+.app{max-width:1240px; margin:0 auto; padding:18px 18px 90px}
+
+/* ===== glass genérico ===== */
+.glass{
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(18px) saturate(1.5);
+  backdrop-filter:blur(18px) saturate(1.5);
+  border:1px solid var(--glass-bd);
   box-shadow:var(--shadow);
+  border-radius:16px;
 }
-.title h1{margin:0;font-size:19px;letter-spacing:-.2px}
-.title p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+
+/* ===== topbar ===== */
+.topbar{display:flex; align-items:center; gap:13px; margin-bottom:16px; padding:12px 16px; flex-wrap:wrap}
+.logo-img{width:40px;height:40px;object-fit:contain;flex:0 0 auto;
+  filter:drop-shadow(0 2px 6px rgba(210,80,20,.25))}
+.title h1{margin:0;font-size:18px;letter-spacing:-.2px}
+.title p{margin:2px 0 0;color:var(--muted);font-size:12px}
 .spacer{flex:1}
-.badge-fase{background:var(--brand-soft);color:var(--brand-ink);font-weight:600;font-size:11.5px;
-  padding:5px 10px;border-radius:20px}
 
-.grid{display:grid; grid-template-columns:1fr; gap:16px}
-@media(min-width:960px){ .grid{grid-template-columns:1fr 300px} }
+.segmented{display:inline-flex;background:rgba(255,255,255,.5);border:1px solid var(--glass-bd);
+  border-radius:11px;padding:3px}
+.segmented button{border:none;background:transparent;color:var(--muted);font-weight:700;font-size:12.5px;
+  padding:7px 14px;border-radius:8px;cursor:pointer;transition:.15s}
+.segmented button.on{background:var(--brand);color:#fff;box-shadow:0 3px 10px rgba(242,97,31,.35)}
 
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+/* ===== paneles / controles ===== */
+.panel{border-radius:16px}
 .panel-h{padding:13px 16px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.panel-h h2{margin:0;font-size:14px;font-weight:700;letter-spacing:-.1px}
+.panel-h h2{margin:0;font-size:14px;font-weight:700}
 .panel-b{padding:14px 16px}
-
-/* ---- controls ---- */
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:4px}
 .field label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-.field input,.field select{
-  border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13.5px;background:#fff;color:var(--ink);
-  min-width:120px;font-family:inherit;
-}
+.field input,.field select{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13.5px;
+  background:rgba(255,255,255,.85);color:var(--ink);min-width:120px;font-family:inherit}
 .field input:focus,.field select:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
 button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);
   border-radius:9px;padding:8px 13px;font-size:13px;font-weight:600;transition:.12s}
-button:hover{border-color:#c9d2de;background:#fafbfd}
+button:hover{border-color:#cdd5df; background:#fafbfd}
 button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
 button.primary:hover{background:var(--brand-ink)}
-button.ghost{background:transparent;border-color:transparent;color:var(--brand-ink)}
+button.ghost{background:rgba(255,255,255,.5);border-color:var(--glass-bd);color:var(--brand-ink)}
+.savednote{font-size:11.5px;color:var(--muted)}
 
-/* ---- table ---- */
+/* ===== vistas y transiciones ===== */
+.vista{transition:opacity .35s ease, transform .35s ease}
+.vista.oculto{display:none}
+.vista.entrando{animation:fadeUp .38s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ===== MODO CALENDARIO ===== */
+.pull-hint{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 14px;
+  cursor:grab;user-select:none;color:var(--muted);font-size:12px;font-weight:600;touch-action:none}
+.pull-hint:active{cursor:grabbing}
+.pull-bar{width:44px;height:5px;border-radius:5px;background:rgba(30,42,58,.22);transition:.15s}
+.pull-hint.activo .pull-bar{background:var(--brand);width:70px}
+.pull-hint.activo span{color:var(--brand-ink)}
+
+.cal-head{display:flex;align-items:center;gap:12px;margin:2px 4px 12px}
+.cal-head h2{margin:0;font-size:16px}
+.cal-nav{margin-left:auto;display:flex;gap:8px}
+.cal-nav button{width:38px;height:38px;border-radius:11px;font-size:20px;line-height:1;padding:0;
+  background:var(--glass-bg);border:1px solid var(--glass-bd);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+
+.cal-track{display:flex;gap:16px;overflow-x:auto;padding:6px 6px 18px;scroll-snap-type:x mandatory;
+  scroll-behavior:smooth}
+.cal-track::-webkit-scrollbar{height:10px}
+.cal-track::-webkit-scrollbar-thumb{background:rgba(30,42,58,.18);border-radius:10px}
+
+.cal-card{flex:0 0 230px;scroll-snap-align:center;border-radius:18px;padding:14px 15px;
+  display:flex;flex-direction:column;gap:10px;min-height:290px;transition:transform .18s}
+.cal-card:hover{transform:translateY(-3px)}
+.cal-card.es-domingo{background:linear-gradient(180deg,rgba(253,236,235,.85),rgba(255,255,255,.6))}
+.cal-card.es-feriado{background:linear-gradient(180deg,rgba(255,242,226,.9),rgba(255,255,255,.6))}
+.cal-card.es-sabado{background:linear-gradient(180deg,rgba(231,246,240,.9),rgba(255,255,255,.6))}
+.cal-card.con-extra{box-shadow:0 0 0 2px var(--extra-b), var(--shadow)}
+
+.cal-top{display:flex;justify-content:space-between;align-items:flex-start}
+.cal-dow{font-weight:700;font-size:13px;color:var(--ink)}
+.cal-fecha{display:flex;flex-direction:column;align-items:flex-end;line-height:1}
+.cal-num{font-size:30px;font-weight:800;color:var(--brand)}
+.cal-mes{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px}
+.cal-chip{display:inline-block;align-self:flex-start;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px}
+.cal-chip.c{background:var(--brand-soft);color:var(--brand-ink)}
+.cal-chip.s{background:var(--sabado);color:#0a6b4f}
+.cal-chip.d{background:var(--domingo);color:#a53434}
+.cal-chip.f{background:var(--feriado);color:#b5741a}
+
+.cal-marcas{display:grid;grid-template-columns:1fr 1fr;gap:5px 8px}
+.cal-marcas label{font-size:9.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.cal-time{border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center;font-family:inherit;
+  font-size:13px;background:rgba(255,255,255,.9);font-variant-numeric:tabular-nums;width:100%}
+.cal-time:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.cal-time:disabled{background:rgba(240,240,240,.5);color:#aaa}
+
+.cal-horas{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;font-weight:700;color:var(--ink)}
+.cal-horas span{display:inline-flex;align-items:center;gap:4px}
+.cal-extra{color:var(--teal)}
+.cal-horas .bal-pos{color:var(--pos)} .cal-horas .bal-neg{color:var(--neg)}
+
+.cal-notabox{margin-top:auto}
+.cal-notalbl{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);font-weight:700;margin-bottom:4px}
+.cal-nota{width:100%;border:1px solid var(--line);border-radius:9px;padding:7px 8px;font-family:inherit;
+  font-size:12px;resize:vertical;background:rgba(255,255,255,.9);color:var(--ink)}
+.cal-nota:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+
+/* tarjeta de cierre de mes */
+.cal-cierre{flex:0 0 250px;background:linear-gradient(180deg,rgba(242,97,31,.14),rgba(255,255,255,.65));
+  align-items:stretch;text-align:center}
+.cierre-badge{align-self:center;background:var(--brand);color:#fff;font-size:10.5px;font-weight:700;
+  padding:4px 11px;border-radius:20px}
+.cal-cierre h3{margin:6px 0 4px;font-size:17px}
+.cierre-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}
+.cierre-grid > div{background:rgba(255,255,255,.7);border-radius:11px;padding:8px 4px;display:flex;flex-direction:column}
+.cierre-grid .n{font-size:19px;font-weight:800;color:var(--brand-ink);font-variant-numeric:tabular-nums}
+.cierre-grid .n.bal-pos{color:var(--pos)} .cierre-grid .n.bal-neg{color:var(--neg)}
+.cierre-grid .l{font-size:10px;color:var(--muted);font-weight:600}
+.cierre-btns{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+.cierre-hint{font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.4}
+
+/* ===== barras de herramientas / botones glass ===== */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:12px 14px;margin-top:6px;border-radius:14px}
+.toolbar-mini{display:flex;gap:8px}
+.btn-glass{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:rgba(255,255,255,.55);border:1px solid var(--glass-bd);color:var(--brand-ink);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-weight:700}
+.btn-glass:hover{background:#fff;border-color:var(--brand);color:var(--brand-ink)}
+.btn-glass.sm{padding:6px 10px;font-size:12px}
+.btn-glass.off{opacity:.5;cursor:not-allowed}
+
+/* ===== MODO ESCRITORIO: tabla ===== */
+.grid{display:grid; grid-template-columns:1fr; gap:16px}
+@media(min-width:960px){ .grid{grid-template-columns:1fr 300px} }
 .tablewrap{overflow-x:auto;border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:12.8px;min-width:920px}
-thead th{
-  background:#f7f9fc;color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;
-  padding:9px 8px;text-align:center;border-bottom:2px solid var(--line);position:sticky;top:0;white-space:nowrap;
-}
+thead th{background:rgba(247,249,252,.9);color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.4px;padding:9px 8px;text-align:center;border-bottom:2px solid var(--line);position:sticky;top:0;white-space:nowrap}
 tbody td{padding:2px 5px;text-align:center;border-bottom:1px solid var(--line2);white-space:nowrap}
-tbody tr:hover{background:#fbfcfe}
+tbody tr:hover{background:rgba(251,252,254,.8)}
+tr.semana-inicio td{border-top:2px solid #d5deea}     /* separación entre semanas */
 .col-dia{text-align:left;font-weight:600;padding-left:12px}
 .col-fecha{color:var(--muted);font-variant-numeric:tabular-nums}
 .cellinput{border:1px solid transparent;background:transparent;border-radius:7px;padding:6px 5px;width:82px;
   text-align:center;font-family:inherit;font-size:12.8px;color:var(--ink);font-variant-numeric:tabular-nums}
 .cellinput:hover{border-color:var(--line)}
 .cellinput:focus{outline:none;border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px var(--brand-soft)}
+.cellinput:disabled{color:#b3b3b3}
 .descinput{width:130px;text-align:left}
 .calc{font-variant-numeric:tabular-nums;font-weight:600}
 .muted-num{color:var(--muted);font-variant-numeric:tabular-nums}
 .bal-pos{color:var(--pos);font-weight:700;font-variant-numeric:tabular-nums}
 .bal-neg{color:var(--neg);font-weight:700;font-variant-numeric:tabular-nums}
-.chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.3px}
 
-/* estado de fila */
 tr.domingo{background:var(--domingo)}
-tr.domingo:hover{background:#fbe3e3}
 tr.domingo .col-dia{color:#a53434}
 tr.feriado{background:var(--feriado)}
-tr.feriado:hover{background:#ffedd4}
 tr.feriado .col-dia{color:#b5741a}
 tr.sabado{background:var(--sabado)}
-tr.sabado:hover{background:#e0eefa}
 tr.tiene-extra td.col-extra{background:var(--extra)}
 tr.tiene-baja td.col-baja{background:var(--baja)}
-
 tfoot td{padding:10px 8px;border-top:2px solid var(--line);font-weight:800;font-variant-numeric:tabular-nums;
-  background:#f7f9fc}
+  background:rgba(247,249,252,.9)}
 tfoot .lbl{text-align:right;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10.5px;letter-spacing:.4px}
 
-/* ---- side panel ---- */
+/* ===== resumen lateral ===== */
 .kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line2);font-size:13px}
 .kv:last-child{border-bottom:none}
 .kv .v{font-weight:700;font-variant-numeric:tabular-nums}
 .kpi{background:var(--brand-soft);border-radius:11px;padding:12px 14px;margin-bottom:10px}
 .kpi .n{font-size:24px;font-weight:800;color:var(--brand-ink);font-variant-numeric:tabular-nums}
-.kpi .l{font-size:11.5px;color:var(--brand-ink);opacity:.8;font-weight:600}
+.kpi .l{font-size:11.5px;color:var(--brand-ink);opacity:.85;font-weight:600}
 .logic li{margin-bottom:7px;color:#3a4553}
 .logic b{color:var(--ink)}
-details.logic{margin-top:2px}
-details summary{cursor:pointer;font-weight:700;font-size:13px;padding:6px 0;color:var(--brand-ink)}
 .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.legend .chip{border:1px solid transparent}
+.chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid transparent}
 .chip.d{background:var(--domingo);color:#a53434;border-color:var(--domingo-b)}
 .chip.f{background:var(--feriado);color:#b5741a;border-color:var(--feriado-b)}
-.chip.s{background:var(--sabado);color:#0b4a8a;border-color:var(--sabado-b)}
+.chip.s{background:var(--sabado);color:#0a6b4f;border-color:var(--sabado-b)}
 .chip.e{background:var(--extra);color:#0a6b4f;border-color:var(--extra-b)}
 .chip.b{background:var(--baja);color:#5b47a0;border-color:var(--baja-b)}
 .hint{color:var(--muted);font-size:12px;margin-top:8px}
-.savednote{font-size:11.5px;color:var(--muted)}
-dialog{border:none;border-radius:14px;box-shadow:0 10px 50px rgba(20,40,70,.25);padding:0;max-width:420px;width:92%}
-dialog::backdrop{background:rgba(20,30,45,.35)}
+
+/* ===== modal ===== */
+dialog{border:none;border-radius:16px;box-shadow:0 10px 50px rgba(20,40,70,.28);padding:0;max-width:440px;width:92%}
+dialog::backdrop{background:rgba(20,30,45,.4);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .modal-b{padding:18px 20px}
-.modal-b h3{margin:0 0 12px}
+.modal-b h3{margin:0 0 14px}
+
+/* ===== impresión ===== */
+@media print{
+  .bg,.topbar,.toolbar,.toolbar-mini,.pull-hint,.cal-head .cal-nav,#vistaCalendario,.hint{display:none !important}
+  body{background:#fff}
+  .app{padding:0}
+  #vistaEscritorio.oculto{display:block !important}
+  .glass{box-shadow:none;border:none;background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .grid{grid-template-columns:1fr}
+}
