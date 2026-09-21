@@ -45,9 +45,12 @@ body{
 /* carrusel de fondos (tema vidrio) */
 .bg-carousel{position:absolute; inset:0; overflow:hidden}
 .bg-slide{position:absolute; inset:0; background-size:cover; background-position:center;
-  opacity:0; transition:opacity 1.8s ease; transform:scale(1.06)}
+  opacity:0; transition:opacity 2.6s ease; transform:scale(1.18);
+  filter:blur(16px) saturate(1.1)}          /* esmerilado: menos definido */
 .bg-slide.on{opacity:1}
-.bg-carousel::after{content:""; position:absolute; inset:0; background:rgba(18,24,32,.42)} /* legibilidad del glass */
+.bg-carousel::after{content:""; position:absolute; inset:0;
+  background:rgba(20,26,34,.34);
+  -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px)}  /* capa vidrio extra */
 
 /* claro: blanco con difuminados suaves */
 body[data-theme="claro"] .bg-grad{
