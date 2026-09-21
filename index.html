@@ -7,10 +7,11 @@
 <link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body data-theme="vidrio">
 
 <!-- ===== Fondo con efecto vidrio ===== -->
 <div class="bg">
+  <div class="bg-carousel" id="bgCarousel"></div>
   <div class="bg-grad"></div>
   <div class="blob b1"></div>
   <div class="blob b2"></div>
@@ -31,6 +32,7 @@
       <button data-modo="calendario" class="on">Calendario</button>
       <button data-modo="escritorio">Escritorio</button>
     </div>
+    <button class="ghost" id="btnTema" title="Cambiar estilo visual">Tema</button>
     <button class="ghost" id="btnConfig">⚙ Ajustes</button>
   </div>
 
@@ -196,6 +198,7 @@
 
 <!-- ===== Scripts (orden de dependencia) ===== -->
 <script src="js/config.js"></script>
+<script src="js/theme.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/holidays.js"></script>
 <script src="js/storage.js"></script>

@@ -30,17 +30,45 @@ body{
 .bg{position:fixed; inset:0; z-index:-1; overflow:hidden}
 .bg-grad{position:absolute; inset:0;
   background:
-    radial-gradient(1200px 600px at 12% 8%, #ffe9d6 0%, transparent 55%),
-    radial-gradient(1000px 700px at 88% 12%, #d7f3e8 0%, transparent 55%),
-    radial-gradient(1000px 800px at 60% 100%, #ffe0d6 0%, transparent 55%),
-    linear-gradient(160deg,#fbf6f0,#eef4f2);
+    radial-gradient(1100px 700px at 15% 0%, #2b3340 0%, transparent 60%),
+    radial-gradient(1000px 800px at 90% 100%, #232a35 0%, transparent 60%),
+    linear-gradient(160deg,#2a313c,#1c222b);
 }
-.blob{position:absolute; border-radius:50%; filter:blur(60px); opacity:.5}
-.blob.b1{width:420px;height:420px; background:#f5a06a; top:-80px; left:-60px}
-.blob.b2{width:380px;height:380px; background:#41c79e; top:40px; right:-80px}
-.blob.b3{width:460px;height:460px; background:#f2705a; bottom:-140px; left:30%}
+.blob{position:absolute; border-radius:50%; filter:blur(90px); opacity:.14}
+.blob.b1{width:440px;height:440px; background:#f2611f; top:-120px; left:-80px}
+.blob.b2{width:400px;height:400px; background:#16a97f; top:20px; right:-100px}
+.blob.b3{width:480px;height:480px; background:#e0261a; bottom:-180px; left:32%}
 
 .app{max-width:1240px; margin:0 auto; padding:18px 18px 90px}
+
+/* ===== temas visuales ===== */
+/* carrusel de fondos (tema vidrio) */
+.bg-carousel{position:absolute; inset:0; overflow:hidden}
+.bg-slide{position:absolute; inset:0; background-size:cover; background-position:center;
+  opacity:0; transition:opacity 1.8s ease; transform:scale(1.06)}
+.bg-slide.on{opacity:1}
+.bg-carousel::after{content:""; position:absolute; inset:0; background:rgba(18,24,32,.42)} /* legibilidad del glass */
+
+/* claro: blanco con difuminados suaves */
+body[data-theme="claro"] .bg-grad{
+  background:
+    radial-gradient(1000px 600px at 15% 0%, #eef2f7 0%, transparent 60%),
+    radial-gradient(1000px 700px at 90% 100%, #e9eef4 0%, transparent 60%),
+    linear-gradient(160deg,#f6f8fb,#eceff3);
+}
+body[data-theme="claro"] .blob{opacity:.09}
+body[data-theme="claro"] .cal-head h2{color:var(--ink)}
+body[data-theme="claro"] .pull-hint{color:var(--muted)}
+body[data-theme="claro"] .pull-bar{background:rgba(30,42,58,.25)}
+
+/* oscuro usa los valores por defecto de .bg-grad (ya oscuros) */
+
+/* mostrar/ocultar capas según el tema */
+body[data-theme="vidrio"] .bg-grad,
+body[data-theme="vidrio"] .blob{display:none}
+body:not([data-theme="vidrio"]) .bg-carousel{display:none}
+
+#btnTema{display:inline-flex;align-items:center;gap:6px}
 
 /* ===== glass genérico ===== */
 .glass{
@@ -93,14 +121,14 @@ button.ghost{background:rgba(255,255,255,.5);border-color:var(--glass-bd);color:
 
 /* ===== MODO CALENDARIO ===== */
 .pull-hint{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 14px;
-  cursor:grab;user-select:none;color:var(--muted);font-size:12px;font-weight:600;touch-action:none}
+  cursor:grab;user-select:none;color:rgba(255,255,255,.65);font-size:12px;font-weight:600;touch-action:none}
 .pull-hint:active{cursor:grabbing}
-.pull-bar{width:44px;height:5px;border-radius:5px;background:rgba(30,42,58,.22);transition:.15s}
+.pull-bar{width:44px;height:5px;border-radius:5px;background:rgba(255,255,255,.35);transition:.15s}
 .pull-hint.activo .pull-bar{background:var(--brand);width:70px}
-.pull-hint.activo span{color:var(--brand-ink)}
+.pull-hint.activo span{color:#ffd9c4}
 
 .cal-head{display:flex;align-items:center;gap:12px;margin:2px 4px 12px}
-.cal-head h2{margin:0;font-size:16px}
+.cal-head h2{margin:0;font-size:16px;color:#eef1f5}
 .cal-nav{margin-left:auto;display:flex;gap:8px}
 .cal-nav button{width:38px;height:38px;border-radius:11px;font-size:20px;line-height:1;padding:0;
   background:var(--glass-bg);border:1px solid var(--glass-bd);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}

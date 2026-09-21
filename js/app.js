@@ -54,6 +54,7 @@ function initGesto(){
 /* ---------- init ---------- */
 function init(){
   cfg = loadCfg();
+  initTema();
 
   const selM = document.getElementById("fMes");
   MESES.forEach((m, i) => { const o=document.createElement("option"); o.value=i; o.textContent=m; selM.appendChild(o); });
