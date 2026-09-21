@@ -32,6 +32,7 @@
       <button data-modo="calendario" class="on">Calendario</button>
       <button data-modo="escritorio">Escritorio</button>
     </div>
+    <div class="userbox" id="userBox"></div>
     <button class="ghost" id="btnTema" title="Cambiar estilo visual">Tema</button>
     <button class="ghost" id="btnConfig">⚙ Ajustes</button>
   </div>
@@ -196,17 +197,48 @@
   </div>
 </dialog>
 
+<!-- ===== Pantalla de inicio de sesión ===== -->
+<div id="authOverlay" class="auth-overlay oculto">
+  <div class="auth-card glass">
+    <img src="assets/logo.png" alt="Brighter" class="auth-logo">
+    <h2>Brighter WorkLog</h2>
+    <p class="auth-sub">Ingresa con tu usuario y contraseña.</p>
+    <div class="field"><label>Usuario</label><input id="authUser" type="text" placeholder="ej. monica" autocomplete="username"></div>
+    <div class="field"><label>Contraseña</label><input id="authPass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+    <div class="auth-btns">
+      <button class="primary" id="btnLogin">Ingresar</button>
+      <button id="btnSignup">Crear cuenta</button>
+    </div>
+    <p class="auth-msg" id="authMsg"></p>
+    <p class="auth-hint">Se queda tu sesión guardada: la próxima vez entra directo, sin volver a escribir la clave.</p>
+  </div>
+</div>
+
+<!-- ===== Panel de administradora ===== -->
+<dialog id="dlgAdmin">
+  <div class="modal-b">
+    <h3>Registros de todos los usuarios</h3>
+    <div id="adminLista" class="admin-lista"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:12px">
+      <button id="btnCerrarAdmin">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
 <!-- ===== Scripts (orden de dependencia) ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
 <script src="js/theme.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/holidays.js"></script>
+<script src="js/cloud.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/calc.js"></script>
 <script src="js/render.js"></script>
 <script src="js/carousel.js"></script>
 <script src="js/export.js"></script>
 <script src="js/settings.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

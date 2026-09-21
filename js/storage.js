@@ -1,6 +1,6 @@
 /* ================= storage.js =================
-   Persistencia local (localStorage). Todo va envuelto en try/catch
-   porque en algunos contextos el almacenamiento puede fallar.
+   Guardado. Si hay sesión en la nube (MODO_NUBE) los registros van a
+   Supabase; siempre se guarda además una copia local como respaldo/caché.
 ============================================================ */
 "use strict";
 
@@ -11,22 +11,20 @@ function loadCfg(){
   }catch(e){}
   return Object.assign({}, CFG_DEFAULT);
 }
+function saveCfg(){ try{ localStorage.setItem(LS_CFG, JSON.stringify(cfg)); }catch(e){} }
 
-function saveCfg(){
-  try{ localStorage.setItem(LS_CFG, JSON.stringify(cfg)); }catch(e){}
-}
-
-/** clave única por empleado + año-mes */
+/* clave local: usuario (o "local") + empleado + año-mes */
 function dataKey(){
-  return estado.empleado.trim().toUpperCase() + "||" + estado.anio + "-" + estado.mes;
+  const u = usuarioActual ? usuarioActual.id : "local";
+  return u + "||" + estado.empleado.trim().toUpperCase() + "||" + estado.anio + "-" + estado.mes;
 }
-
 function loadAll(){
   try{ return JSON.parse(localStorage.getItem(LS_DATA) || "{}"); }
   catch(e){ return {}; }
 }
 
-function saveEstado(){
+/* caché local (siempre) */
+function guardarLocal(){
   if(!estado.empleado.trim()) return;
   try{
     const all = loadAll();
@@ -38,13 +36,31 @@ function saveEstado(){
       }))
     };
     localStorage.setItem(LS_DATA, JSON.stringify(all));
-    setSaved("Guardado ✓ " + new Date().toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"}));
-  }catch(e){
-    setSaved("No se pudo guardar localmente");
+  }catch(e){}
+}
+
+/* guardado principal (local + nube con pequeño retardo para no saturar) */
+let _saveTimer = null;
+function saveEstado(){
+  if(!estado.empleado.trim()) return;
+  if(typeof _soloLectura !== "undefined" && _soloLectura) return;  // vista admin: no guardar
+  guardarLocal();
+  if(MODO_NUBE){
+    setSaved("Guardando…");
+    clearTimeout(_saveTimer);
+    const emp = estado.empleado, an = estado.anio, me = estado.mes;
+    const dias = estado.dias.map(d => ({
+      ent:d.ent, sal:d.sal, ent2:d.ent2, sal2:d.sal2,
+      extraManual:d.extraManual, baja:d.baja, desc:d.desc, nota:d.nota
+    }));
+    _saveTimer = setTimeout(async () => {
+      const ok = await cloudGuardarRegistro(emp, an, me, dias);
+      setSaved(ok ? "Guardado en la nube ✓ " + _hora() : "Guardado local (sin nube)");
+    }, 800);
+  }else{
+    setSaved("Guardado local ✓ " + _hora());
   }
 }
 
-function setSaved(t){
-  const el = document.getElementById("savedNote");
-  if(el) el.textContent = t;
-}
+function _hora(){ return new Date().toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"}); }
+function setSaved(t){ const el = document.getElementById("savedNote"); if(el) el.textContent = t; }

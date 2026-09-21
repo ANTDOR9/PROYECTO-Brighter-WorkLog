@@ -5,8 +5,9 @@
 ============================================================ */
 "use strict";
 
-/** genera (o recarga desde localStorage) el mes según los campos del formulario */
-function generarMes(preferGuardado){
+/** genera (o recarga desde la nube/localStorage) el mes según el formulario */
+async function generarMes(preferGuardado){
+  if(typeof _soloLectura !== "undefined") _soloLectura = false;   // salir de vista admin
   estado.empleado = document.getElementById("fEmpleado").value;
   estado.mes      = +document.getElementById("fMes").value;
   estado.anio     = +document.getElementById("fAnio").value;
@@ -16,8 +17,10 @@ function generarMes(preferGuardado){
 
   let guardado = null;
   if(preferGuardado && estado.empleado.trim()){
-    const all = loadAll();
-    guardado = all[dataKey()] || null;
+    if(MODO_NUBE){
+      try{ guardado = await cloudCargarRegistro(estado.empleado, estado.anio, estado.mes); }catch(e){}
+    }
+    if(!guardado){ const all = loadAll(); guardado = all[dataKey()] || null; }  // respaldo local
   }
 
   const ndias = new Date(estado.anio, estado.mes + 1, 0).getDate();

@@ -75,9 +75,18 @@ function init(){
   document.getElementById("calNext").onclick = () => calScroll(1);
   initGesto();
 
-  generarMes(false);
+  // botones de la pantalla de login
+  document.getElementById("btnLogin").onclick  = () => accionAuth("in");
+  document.getElementById("btnSignup").onclick = () => accionAuth("up");
+  document.getElementById("btnCerrarAdmin").onclick = () => document.getElementById("dlgAdmin").close();
 
-  // modo recordado (por defecto calendario)
+  // la app arranca después de resolver la sesión (auth.js)
+  initAuth();
+}
+
+/** llamado por auth.js una vez resuelto el inicio de sesión (o modo local) */
+function arrancarApp(){
+  generarMes(false);
   let modo = "calendario";
   try{ modo = localStorage.getItem(LS_MODO) || "calendario"; }catch(e){}
   cambiarModo(modo);
