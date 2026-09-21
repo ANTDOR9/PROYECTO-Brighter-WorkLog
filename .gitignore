@@ -1,0 +1,12 @@
+# Sistema / editores
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Datos exportados locales (no versionar planillas con sueldos)
+/exportados/
+*.xlsx
+*.pdf
+*.docx
