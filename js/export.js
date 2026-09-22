@@ -39,7 +39,8 @@ function _datosExport(){
 async function exportarExcel(){
   const emp = estado.empleado.trim() || "Empleado";
   const per = MESES[estado.mes] + " " + estado.anio;
-  const { encab, filas, totales, nCols } = _datosExport();
+  const mon = cfg.moneda || "S/";
+  const { encab, filas, totales, nCols, m } = _datosExport();
 
   if(typeof ExcelJS !== "undefined"){
     const wb = new ExcelJS.Workbook();
@@ -96,14 +97,33 @@ async function exportarExcel(){
       c.fill = { type:"pattern", pattern:"solid", fgColor:{argb:"FFFDE8DD"} };
     });
 
+    // Bloque de pago
+    const rTot = 4 + filas.length;
+    const pagoFilas = [
+      ["Horas normales pagadas", +fmt(m.normPag), "Tarifa", +fmt(cfg.tarifaNormal), "Subtotal", mon+" "+fmt(m.salarioNormal)],
+      ["Horas extras pagadas",   +fmt(m.extrasPag), "Tarifa", +fmt(cfg.tarifaExtra),  "Subtotal", mon+" "+fmt(m.salarioExtra)],
+      ["TOTAL A PAGAR", "", "", "", "", mon+" "+fmt(m.salario)]
+    ];
+    pagoFilas.forEach((pf,pi) => {
+      const r = ws.getRow(rTot+2+pi);
+      pf.forEach((v,ci) => {
+        const c = r.getCell(ci+1); c.value = v; c.border = BORDE;
+        c.alignment = { vertical:"middle", horizontal: ci===0?"left":"center" };
+        c.font = { size:10, bold: pi===2 };
+      });
+      const es = (pi===2);
+      r.eachCell(c => { c.fill = { type:"pattern", pattern:"solid", fgColor:{argb: es?"FFF26522":"FFFDE8DD"} };
+                        if(es) c.font = { bold:true, size:12, color:{argb:"FFFFFFFF"} }; });
+    });
+
     // Anchos de columna
     ws.columns.forEach((col,i) => {
       const h = encab[i] || "";
-      col.width = i===0?12 : i===1?12 : /Descrip|Nota/.test(h)?20 : 10;
+      col.width = i===0?18 : i===1?12 : /Descrip|Nota/.test(h)?20 : 10;
     });
 
     // Firmas
-    const fFirma = 4 + filas.length + 3;
+    const fFirma = rTot + 8;
     ws.getCell(fFirma, 1).value = "_______________________________";
     ws.getCell(fFirma+1, 1).value = "Firma del empleado";
     const colJefe = Math.max(5, nCols-3);

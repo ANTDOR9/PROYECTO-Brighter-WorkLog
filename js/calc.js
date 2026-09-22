@@ -71,7 +71,16 @@ function calcMes(){
     sT+=c.trab; sN+=c.normales; sE+=c.extra; sB+=c.baja; sTot+=c.total;
     bal+=c.balanceDia; meta+=c.meta;
   });
-  return { trab:sT, normales:sN, extras:sE, baja:sB, total:sTot, balance:bal, meta };
+  // pago con compensación mensual: las horas de más cubren las de menos,
+  // y solo el neto por encima de la meta del mes se paga como extra.
+  const normPag   = Math.min(sT, meta);
+  const extrasPag = Math.max(0, sT - meta);
+  const salarioNormal = normPag   * (cfg.tarifaNormal || 0);
+  const salarioExtra  = extrasPag * (cfg.tarifaExtra  || 0);
+  const salario = salarioNormal + salarioExtra;
+
+  return { trab:sT, normales:sN, extras:sE, baja:sB, total:sTot, balance:bal, meta,
+           normPag, extrasPag, salarioNormal, salarioExtra, salario };
 }
 
 /** máximo de turnos en el mes (para exportar columnas) */

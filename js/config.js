@@ -19,7 +19,10 @@ const CFG_DEFAULT = {
   topeCompleto:8.5,
   topeMedio:5.5,
   feriadosArequipa:true,          // añadir Aniversario de Arequipa (15 ago)
-  toleranciaExtraMin:0            // minutos de tolerancia antes de contar extra
+  toleranciaExtraMin:0,           // minutos de tolerancia antes de contar extra
+  tarifaNormal:4.57,              // pago por hora normal
+  tarifaExtra:5.50,               // pago por hora extra
+  moneda:"S/"
 };
 
 /* configuración activa (se rellena en app.js tras cargar de localStorage) */

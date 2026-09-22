@@ -143,12 +143,17 @@
         <div class="panel glass" style="margin-bottom:16px">
           <div class="panel-h"><h2>Resumen</h2></div>
           <div class="panel-b">
-            <div class="kpi"><div class="n" id="kHoras">0.00</div><div class="l">Horas trabajadas del mes</div></div>
+            <div class="kpi kpi-pago">
+              <div class="l">Total a pagar (mes)</div>
+              <div class="n" id="kPago">S/ 0.00</div>
+              <div class="pago-sub" id="kPagoSub"></div>
+            </div>
+            <div class="kv"><span>Horas trabajadas</span><span class="v" id="kHoras">0.00</span></div>
             <div class="kv"><span>Meta del mes</span><span class="v" id="kMeta">0.00</span></div>
-            <div class="kv"><span>Horas normales</span><span class="v" id="kNorm">0.00</span></div>
-            <div class="kv"><span>Horas extras</span><span class="v" id="kExtra">0.00</span></div>
+            <div class="kv"><span>Normales pagadas</span><span class="v" id="kNormPag">0.00</span></div>
+            <div class="kv"><span>Extras pagadas</span><span class="v" id="kExtraPag">0.00</span></div>
             <div class="kv"><span>Horas de baja</span><span class="v" id="kBaja">0.00</span></div>
-            <div class="kv"><span>Balance acumulado</span><span class="v" id="kBal">0.00</span></div>
+            <div class="kv"><span>Saldo de horas</span><span class="v" id="kBal">0.00</span></div>
             <div class="hint" id="balMsg"></div>
           </div>
         </div>
@@ -190,6 +195,11 @@
     <div class="row" style="margin-bottom:12px">
       <div class="field"><label>Día de media jornada</label><select id="cDiaMedio"></select></div>
       <div class="field"><label>Tolerancia extra (min)</label><input id="cTolerancia" type="number" step="5" min="0" title="No cuenta como extra por debajo de estos minutos"></div>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <div class="field"><label>Pago hora normal</label><input id="cTarifaN" type="number" step="0.01" min="0"></div>
+      <div class="field"><label>Pago hora extra</label><input id="cTarifaE" type="number" step="0.01" min="0"></div>
+      <div class="field"><label>Moneda</label><input id="cMoneda" type="text" maxlength="4" style="min-width:70px"></div>
     </div>
     <label class="check" style="margin-bottom:16px;display:flex;gap:8px;align-items:center;cursor:pointer">
       <input id="cArequipa" type="checkbox"> Incluir feriados regionales de Arequipa (15 ago)

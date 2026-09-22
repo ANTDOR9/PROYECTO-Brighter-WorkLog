@@ -155,11 +155,15 @@ function renderTabla(){
 
 function renderResumenLateral(){
   const m = calcMes();
-  document.getElementById("kHoras").textContent = fmt(m.trab);
-  document.getElementById("kMeta").textContent  = fmt(m.meta);
-  document.getElementById("kNorm").textContent  = fmt(m.normales);
-  document.getElementById("kExtra").textContent = fmt(m.extras);
-  document.getElementById("kBaja").textContent  = fmt(m.baja);
+  const mon = cfg.moneda || "S/";
+  document.getElementById("kPago").textContent = mon + " " + fmt(m.salario);
+  document.getElementById("kPagoSub").textContent =
+    `${fmt(m.normPag)} h normales + ${fmt(m.extrasPag)} h extras`;
+  document.getElementById("kHoras").textContent   = fmt(m.trab);
+  document.getElementById("kMeta").textContent    = fmt(m.meta);
+  document.getElementById("kNormPag").textContent = fmt(m.normPag);
+  document.getElementById("kExtraPag").textContent= fmt(m.extrasPag);
+  document.getElementById("kBaja").textContent    = fmt(m.baja);
   const kBal = document.getElementById("kBal");
   kBal.textContent = (m.balance >= 0 ? "+" : "") + fmt(m.balance);
   kBal.style.color = m.balance > 0.0001 ? "var(--pos)" : (m.balance < -0.0001 ? "var(--neg)" : "var(--muted)");

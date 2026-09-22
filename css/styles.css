@@ -248,6 +248,14 @@ tfoot .lbl{text-align:right;color:var(--muted);font-weight:700;text-transform:up
 .kpi{background:var(--brand-soft);border-radius:11px;padding:12px 14px;margin-bottom:10px}
 .kpi .n{font-size:24px;font-weight:800;color:var(--brand-ink);font-variant-numeric:tabular-nums}
 .kpi .l{font-size:11.5px;color:var(--brand-ink);opacity:.85;font-weight:600}
+.kpi-pago{background:linear-gradient(135deg,var(--brand),#e0431a);color:#fff;text-align:center;padding:14px}
+.kpi-pago .l{color:#fff;opacity:.92}
+.kpi-pago .n{color:#fff;font-size:32px;line-height:1.1}
+.pago-sub{font-size:11px;color:#fff;opacity:.9;margin-top:3px}
+.cierre-pago{background:linear-gradient(135deg,var(--brand),#e0431a);color:#fff;border-radius:12px;padding:10px 12px;margin-top:8px;text-align:center}
+.cierre-pago .l{font-size:11px;opacity:.9;font-weight:600}
+.cierre-pago .n{font-size:23px;font-weight:800;line-height:1.1}
+.cierre-pago .s{font-size:10px;opacity:.85;margin-top:2px}
 .logic li{margin-bottom:7px;color:#3a4553}
 .logic b{color:var(--ink)}
 .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
@@ -322,8 +330,9 @@ tr.tipo-manual .tipo-chip::after{content:" •";color:var(--brand)}
 .cal-track.modo-foco .cal-card.activa{opacity:1;flex-basis:300px;
   box-shadow:0 12px 40px rgba(20,40,70,.22), 0 0 0 2px var(--brand)}
 .cal-card.activa{position:relative;z-index:2;transform:none}
-.cal-cerrar{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;padding:0;
+.cal-cerrar{display:none;position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;padding:0;
   border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:800;line-height:1;z-index:3}
+.cal-card.activa .cal-cerrar{display:block}
 .cal-cerrar:hover{color:var(--red);border-color:var(--domingo-b)}
 .cal-card:not(.cal-cierre){cursor:pointer}
 
@@ -336,10 +345,15 @@ tr.tipo-manual .tipo-chip::after{content:" •";color:var(--brand)}
 
 /* ===== impresión ===== */
 @media print{
-  .bg,.topbar,.toolbar,.toolbar-mini,.pull-hint,.cal-head .cal-nav,#vistaCalendario,.hint{display:none !important}
+  .bg,.topbar,.toolbar,.toolbar-mini,.pull-hint,.cal-head .cal-nav,#vistaCalendario,.hint,
+  .segmented,.userbox,#btnTema,#btnConfig,#btnGenerar,#btnHistorial,.tadd,.tdel{display:none !important}
   body{background:#fff}
   .app{padding:0}
   #vistaEscritorio.oculto{display:block !important}
   .glass{box-shadow:none;border:none;background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
   .grid{grid-template-columns:1fr}
+  table{min-width:0}
+  /* las casillas de edición se ven como texto plano al imprimir */
+  .tinp,.cellinput,.cal-time{border:none !important;box-shadow:none !important;background:transparent !important;padding:2px !important}
+  .tipo-chip{border:none !important;background:transparent !important;padding:0 !important;font-weight:700}
 }

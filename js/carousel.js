@@ -51,7 +51,7 @@ function renderCalendario(){
       ? `<span class="${c.balanceDia>=0?'bal-pos':'bal-neg'}">${c.balanceDia>=0?"+":""}${fmt(c.balanceDia)} h</span>` : "";
 
     card.innerHTML = `
-      ${_calActiva===idx?'<button class="cal-cerrar" onclick="calFoco(null,event)">×</button>':''}
+      <button class="cal-cerrar" onclick="calFoco(null,event)" title="Salir de vista completa">×</button>
       <div class="cal-top">
         <div class="cal-dow">${DIAS[d.dow]}</div>
         <div class="cal-fecha"><span class="cal-num">${String(d.dia).padStart(2,"0")}</span><span class="cal-mes">${MESES[estado.mes].slice(0,3).toUpperCase()}</span></div>
@@ -81,7 +81,12 @@ function renderCalendario(){
       <div><span class="n">${fmt(m.trab)}</span><span class="l">Trabajadas</span></div>
       <div><span class="n">${fmt(m.normales)}</span><span class="l">Normales</span></div>
       <div><span class="n">${fmt(m.extras)}</span><span class="l">Extras</span></div>
-      <div><span class="n ${m.balance>=0?'bal-pos':'bal-neg'}">${m.balance>=0?"+":""}${fmt(m.balance)}</span><span class="l">Balance</span></div>
+      <div><span class="n ${m.balance>=0?'bal-pos':'bal-neg'}">${m.balance>=0?"+":""}${fmt(m.balance)}</span><span class="l">Saldo h.</span></div>
+    </div>
+    <div class="cierre-pago">
+      <div class="l">Total a pagar</div>
+      <div class="n">${(cfg.moneda||"S/")} ${fmt(m.salario)}</div>
+      <div class="s">${fmt(m.normPag)} h normales + ${fmt(m.extrasPag)} h extras</div>
     </div>
     <div class="cierre-btns">
       <button class="btn-glass" onclick="exportarExcel()">${ICONO.descargar} Descargar Excel</button>
@@ -94,13 +99,37 @@ function renderCalendario(){
   track.classList.toggle("modo-foco", _calActiva !== null);
   track.scrollLeft = scrollPrev;
   bindCalInputs();
+  bindFocoOutside();
 }
 
-/* foco: agranda una tarjeta y oscurece el resto */
+/* foco: agranda una tarjeta y oscurece el resto — sin re-render, para
+   que la transición CSS sea suave al abrir, cerrar y cambiar de tarjeta */
 function calFoco(idx, ev){
   if(ev) ev.stopPropagation();
   _calActiva = idx;
-  renderCalendario();
+  const track = document.getElementById("calTrack");
+  if(!track) return;
+  track.classList.toggle("modo-foco", idx !== null);
+  track.querySelectorAll(".cal-card").forEach(c => {
+    const ci = (c.dataset.i !== undefined) ? +c.dataset.i : null;
+    c.classList.toggle("activa", idx !== null && ci === idx);
+  });
+  if(idx !== null){
+    const el = track.querySelector(".cal-card.activa");
+    if(el) el.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" });
+  }
+}
+
+/* clic fuera de las tarjetas → salir de vista completa (se registra una vez) */
+let _focoOutsideBound = false;
+function bindFocoOutside(){
+  if(_focoOutsideBound) return;
+  _focoOutsideBound = true;
+  document.addEventListener("click", e => {
+    if(_calActiva === null) return;
+    if(e.target.closest(".cal-card") || e.target.closest(".cal-nav")) return;
+    calFoco(null);
+  });
 }
 
 function bindCalInputs(){

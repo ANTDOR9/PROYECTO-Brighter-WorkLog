@@ -29,6 +29,9 @@ function abrirConfig(){
   document.getElementById("cTopeCompleto").value = cfg.topeCompleto;
   document.getElementById("cTopeMedio").value    = cfg.topeMedio;
   document.getElementById("cTolerancia").value   = cfg.toleranciaExtraMin || 0;
+  document.getElementById("cTarifaN").value      = cfg.tarifaNormal;
+  document.getElementById("cTarifaE").value      = cfg.tarifaExtra;
+  document.getElementById("cMoneda").value       = cfg.moneda || "S/";
   document.getElementById("cArequipa").checked   = !!cfg.feriadosArequipa;
   document.getElementById("dlgConfig").showModal();
 }
@@ -40,6 +43,9 @@ function guardarConfig(){
   cfg.topeCompleto      = parseFloat(document.getElementById("cTopeCompleto").value) || 8.5;
   cfg.topeMedio         = parseFloat(document.getElementById("cTopeMedio").value)    || 5.5;
   cfg.toleranciaExtraMin= parseFloat(document.getElementById("cTolerancia").value)   || 0;
+  cfg.tarifaNormal      = parseFloat(document.getElementById("cTarifaN").value) || 0;
+  cfg.tarifaExtra       = parseFloat(document.getElementById("cTarifaE").value) || 0;
+  cfg.moneda            = (document.getElementById("cMoneda").value || "S/").trim();
   cfg.feriadosArequipa  = document.getElementById("cArequipa").checked;
   saveCfg();
   document.getElementById("dlgConfig").close();
