@@ -87,8 +87,21 @@ function init(){
   document.getElementById("btnCerrarGest").onclick  = () => document.getElementById("dlgGestion").close();
   document.getElementById("btnBorrarTodo").onclick  = borrarTodoHistorial;
 
+  // recordatorio del cambio de vista: al iniciar y cada 2 minutos
+  setTimeout(mostrarRecordatorio, 2800);
+  setInterval(mostrarRecordatorio, 120000);
+
   // la app arranca después de resolver la sesión (auth.js)
   initAuth();
+}
+
+let _recTimer = null;
+function mostrarRecordatorio(){
+  const el = document.getElementById("reminder");
+  if(!el) return;
+  el.classList.add("show");
+  clearTimeout(_recTimer);
+  _recTimer = setTimeout(() => el.classList.remove("show"), 6000);
 }
 
 /** historial de meses guardados */

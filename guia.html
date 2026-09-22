@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía — Brighter WorkLog</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<style>
+  :root{
+    --brand:#f2611f; --brand-ink:#c8480f; --brand-soft:#fdeadf;
+    --teal:#16a97f; --red:#e0261a; --ink:#1e2a3a; --muted:#6b7787;
+    --line:#e6ebf1; --panel:#fff; --bg:#f3f5f8;
+    --pos:#12a37f; --neg:#c0392b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.6}
+  .wrap{max-width:860px;margin:0 auto;padding:26px 20px 80px}
+
+  header.top{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  header.top img{width:46px;height:46px;object-fit:contain}
+  header.top h1{margin:0;font-size:22px;letter-spacing:-.3px}
+  header.top p{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+  .hero{background:linear-gradient(135deg,var(--brand),#e0431a);color:#fff;border-radius:18px;
+    padding:22px 24px;margin:16px 0 26px;box-shadow:0 10px 30px rgba(242,97,31,.25)}
+  .hero h2{margin:0 0 6px;font-size:20px}
+  .hero p{margin:0;opacity:.95;font-size:14.5px}
+
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+  nav.toc a{background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-size:13px;
+    font-weight:600;color:var(--brand-ink);text-decoration:none}
+  nav.toc a:hover{border-color:var(--brand);background:var(--brand-soft)}
+
+  section{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(20,40,70,.05)}
+  section h2{margin:0 0 4px;font-size:19px;display:flex;align-items:center;gap:10px}
+  section h2 .ico{width:34px;height:34px;flex:0 0 auto;border-radius:10px;background:var(--brand-soft);
+    display:flex;align-items:center;justify-content:center;color:var(--brand-ink)}
+  section .lead{color:var(--muted);margin:0 0 16px}
+  h3{font-size:15px;margin:18px 0 6px}
+  p{margin:8px 0}
+  b{color:var(--ink)}
+
+  /* línea de tiempo del día */
+  .timeline{display:flex;align-items:stretch;height:46px;border-radius:10px;overflow:hidden;border:1px solid var(--line);margin:12px 0 6px}
+  .seg{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;padding:0 8px;text-align:center}
+  .seg.work{background:var(--teal)}
+  .seg.lunch{background:#cdd5df;color:var(--ink)}
+  .seg.extra{background:var(--brand)}
+  .tl-cap{font-size:12px;color:var(--muted)}
+
+  .ejemplo{background:#f7faf9;border:1px solid #d9ebe4;border-left:4px solid var(--teal);border-radius:10px;
+    padding:14px 16px;margin:14px 0;font-size:14px}
+  .ejemplo .tag{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;
+    padding:2px 9px;border-radius:20px;margin-bottom:8px}
+  .calc-line{font-variant-numeric:tabular-nums}
+  .res{font-weight:800;color:var(--brand-ink)}
+
+  .nota-imp{background:#fff7ef;border:1px solid #f2c281;border-left:4px solid var(--brand);border-radius:10px;
+    padding:14px 16px;margin:14px 0;font-size:14px}
+  .nota-imp b{color:var(--brand-ink)}
+
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+  th{background:#f7f9fc;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+
+  .func{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eef2f7}
+  .func:last-child{border-bottom:none}
+  .func .fico{width:36px;height:36px;flex:0 0 auto;border-radius:10px;background:var(--brand-soft);
+    display:flex;align-items:center;justify-content:center;font-size:18px}
+  .func .ft{font-weight:700;margin:0}
+  .func .fd{margin:2px 0 0;color:#42506180;color:#455063;font-size:13.5px}
+
+  .chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .chip.c{background:var(--brand-soft);color:var(--brand-ink)}
+  .chip.s{background:#e7f6f0;color:#0a6b4f}
+  .chip.d{background:#fdeceb;color:#a53434}
+  .chip.f{background:#fff2e2;color:#b5741a}
+
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:24px}
+  a.volver{display:inline-block;margin-top:10px;background:var(--brand);color:#fff;text-decoration:none;
+    font-weight:700;padding:9px 18px;border-radius:10px}
+  @media(prefers-color-scheme:dark){
+    :root{--bg:#1c222b;--panel:#242b35;--ink:#eef1f5;--muted:#9aa5b3;--line:#333c48;--brand-soft:#3a2a1f}
+    th{background:#2b333e}
+    .ejemplo{background:#22302b;border-color:#2f4a40}
+    .nota-imp{background:#332a20;border-color:#5a4a2f}
+    .timeline{border-color:#333c48}
+    nav.toc a,section,.func .fd{color-scheme:dark}
+    nav.toc a{background:#242b35}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <img src="assets/logo.png" alt="Brighter">
+    <div>
+      <h1>Guía de Brighter WorkLog</h1>
+      <p>Cómo se cuentan las horas, cómo se calcula el pago y qué hace cada función.</p>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h2>En una frase</h2>
+    <p>Registras las horas de entrada y salida de cada día; el sistema cuenta las horas trabajadas,
+       separa las normales de las extras y calcula cuánto se le debe pagar al trabajador.</p>
+  </div>
+
+  <nav class="toc">
+    <a href="#horas">1. Cómo se cuentan las horas</a>
+    <a href="#meta">2. Meta del día</a>
+    <a href="#extras">3. Normales y extras</a>
+    <a href="#mes">4. Compensación del mes</a>
+    <a href="#pago">5. Cómo se calcula el pago</a>
+    <a href="#saldo">6. El saldo NO es dinero</a>
+    <a href="#funciones">7. Qué hace cada función</a>
+    <a href="#ajustes">8. Ajustes explicados</a>
+  </nav>
+
+  <!-- 1 -->
+  <section id="horas">
+    <h2><span class="ico">⏱️</span> 1. Cómo se cuentan las horas</h2>
+    <p class="lead">Cada día puede tener varios turnos (mañana, tarde…). Se suma el tiempo de cada turno.</p>
+    <p><b>Horas trabajadas = (Salida − Entrada) de cada turno, sumadas.</b> El tiempo entre turnos
+       (por ejemplo, el almuerzo) <b>no se paga</b>, porque no está dentro de ningún turno.</p>
+
+    <div class="timeline">
+      <div class="seg work" style="flex:6">Mañana · 7:00 → 13:00 (6 h)</div>
+      <div class="seg lunch" style="flex:1">Almuerzo</div>
+      <div class="seg work" style="flex:3">Tarde · 14:00 → 17:00 (3 h)</div>
+    </div>
+    <div class="tl-cap">La franja gris (13:00–14:00) es el almuerzo: no cuenta.</div>
+
+    <div class="ejemplo">
+      <span class="tag">Ejemplo</span>
+      <div class="calc-line">Mañana 7:00 a 13:00 = <b>6 h</b></div>
+      <div class="calc-line">Tarde 14:00 a 17:00 = <b>3 h</b></div>
+      <div class="calc-line">Horas trabajadas del día = 6 + 3 = <span class="res">9 horas</span></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="meta">
+    <h2><span class="ico">🎯</span> 2. La meta del día</h2>
+    <p class="lead">Cada día tiene una "meta" de horas. Es cuántas horas se esperan ese día.</p>
+    <table>
+      <tr><th>Tipo de día</th><th>Meta</th><th>Cuándo</th></tr>
+      <tr><td><span class="chip c">Jornada completa</span></td><td>8.50 h</td><td>Lunes a viernes</td></tr>
+      <tr><td><span class="chip s">Media jornada</span></td><td>5.50 h</td><td>Sábado</td></tr>
+      <tr><td><span class="chip d">No laborable</span> / <span class="chip f">Feriado</span></td><td>0 h</td><td>Domingos y feriados</td></tr>
+    </table>
+    <p><b>El precio por hora es el mismo</b> en todos los tipos de día. Lo único que cambia es la meta,
+       es decir, <b>a partir de cuántas horas se empieza a contar extra</b>. Puedes cambiar el tipo de un
+       día haciendo clic en su etiqueta de color.</p>
+  </section>
+
+  <!-- 3 -->
+  <section id="extras">
+    <h2><span class="ico">➕</span> 3. Horas normales y horas extras</h2>
+    <p class="lead">Lo trabajado se parte en dos: hasta la meta son "normales"; lo que sobra es "extra".</p>
+    <p><b>Normales</b> = lo trabajado hasta la meta. &nbsp;•&nbsp; <b>Extras</b> = lo que pasa de la meta.</p>
+
+    <div class="timeline">
+      <div class="seg work" style="flex:85">Normales · 8.50 h</div>
+      <div class="seg extra" style="flex:15">Extra · 0.50 h</div>
+    </div>
+
+    <div class="ejemplo">
+      <span class="tag">Ejemplo · día completo (meta 8.50)</span>
+      <div class="calc-line">Trabajó 9 h → <b>8.50 normales</b> + <b>0.50 extra</b></div>
+      <div class="calc-line" style="margin-top:6px">Si hubiera trabajado 6 h → <b>6 normales</b> y <b>0 extra</b> (le faltó para la meta).</div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="mes">
+    <h2><span class="ico">🔁</span> 4. Compensación del mes</h2>
+    <p class="lead">Los días que sobran horas cubren los días que faltan. Solo el neto se paga como extra.</p>
+    <p>Al terminar el mes se suma todo lo trabajado y toda la meta. Si en unos días trabajó de más
+       y en otros de menos, <b>se compensan entre sí</b>. Solo lo que sobre por encima de la meta del
+       mes completo se paga como <b>extra</b>.</p>
+
+    <div class="ejemplo">
+      <span class="tag">Ejemplo del mes</span>
+      <div class="calc-line">Total trabajado en el mes = <b>230 h</b></div>
+      <div class="calc-line">Meta del mes (suma de metas) = <b>220 h</b></div>
+      <div class="calc-line" style="margin-top:6px">Normales pagadas = 220 h &nbsp;·&nbsp; Extras pagadas = <span class="res">10 h</span></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="pago">
+    <h2><span class="ico">💰</span> 5. Cómo se calcula el pago</h2>
+    <p class="lead">Se paga por hora. La hora extra vale un poco más que la normal.</p>
+    <table>
+      <tr><th>Concepto</th><th>Fórmula</th></tr>
+      <tr><td>Pago normal</td><td>Horas normales × tarifa normal</td></tr>
+      <tr><td>Pago extra</td><td>Horas extras × tarifa extra</td></tr>
+      <tr><td><b>Total a pagar</b></td><td><b>Pago normal + Pago extra</b></td></tr>
+    </table>
+
+    <div class="ejemplo">
+      <span class="tag">Ejemplo · tarifas S/ 4.57 y S/ 5.50</span>
+      <div class="calc-line">220 h normales × S/ 4.57 = <b>S/ 1,005.40</b></div>
+      <div class="calc-line">10 h extras × S/ 5.50 = <b>S/ 55.00</b></div>
+      <div class="calc-line" style="margin-top:6px">Total a pagar = <span class="res">S/ 1,060.40</span></div>
+    </div>
+    <p>Las tarifas y la moneda se configuran en <b>Ajustes</b>.</p>
+  </section>
+
+  <!-- 6 -->
+  <section id="saldo">
+    <h2><span class="ico">⚖️</span> 6. El "saldo de horas" NO es dinero</h2>
+    <p class="lead">Un número negativo no significa que alguien deba pagar.</p>
+    <div class="nota-imp">
+      El <b>saldo de horas</b> (por ejemplo <b style="color:var(--neg)">−5.55 h</b>) solo indica cuántas horas
+      le <b>faltaron</b> a la meta de ese día. Sirve para la compensación del mes. <b>Nunca</b> significa que
+      el trabajador le deba dinero a la empresa. El <b>Total a pagar siempre es a favor del trabajador</b>
+      (horas trabajadas × tarifa) y nunca es negativo.
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="funciones">
+    <h2><span class="ico">🧭</span> 7. Qué hace cada función</h2>
+    <p class="lead">Un repaso rápido de los botones y vistas de la aplicación.</p>
+
+    <div class="func"><div class="fico">📅</div><div><p class="ft">Calendario / Escritorio</p><p class="fd">Dos formas de ver lo mismo: el <b>Calendario</b> muestra un día por tarjeta (cómodo para registrar); el <b>Escritorio</b> es la tabla completa del mes. Cambias con el botón de arriba o arrastrando hacia abajo.</p></div></div>
+
+    <div class="func"><div class="fico">🕗</div><div><p class="ft">+ turno</p><p class="fd">Agrega otro par de entrada–salida al día (por si entró y salió varias veces). La "×" quita un turno.</p></div></div>
+
+    <div class="func"><div class="fico">🏷️</div><div><p class="ft">Etiqueta de tipo de día</p><p class="fd">La etiqueta de color (Completo, Media jornada, No laborable) se puede hacer clic para cambiar el tipo de ese día. Sale un aviso explicando qué cambia.</p></div></div>
+
+    <div class="func"><div class="fico">📝</div><div><p class="ft">Nota</p><p class="fd">Un espacio para escribir algo del día (por ejemplo "trabajó horas seguidas"). Se guarda con el registro.</p></div></div>
+
+    <div class="func"><div class="fico">🗓️</div><div><p class="ft">Abrir / crear mes</p><p class="fd">Crea o abre la grilla de ese mes. <b>No es lo que guarda</b>: el guardado en la nube es automático mientras editas.</p></div></div>
+
+    <div class="func"><div class="fico">🕘</div><div><p class="ft">Historial</p><p class="fd">Lista los meses ya guardados para volver a abrirlos. (Para borrar, se hace desde Ajustes.)</p></div></div>
+
+    <div class="func"><div class="fico">⬇️</div><div><p class="ft">Descargar Excel / Imprimir</p><p class="fd">Descarga la planilla del mes en Excel (con bordes, totales y líneas de firma) o la manda a imprimir.</p></div></div>
+
+    <div class="func"><div class="fico">🎨</div><div><p class="ft">Fondo 1 / 2 / 3</p><p class="fd">Cambia el estilo visual: vidrio con imágenes, claro u oscuro.</p></div></div>
+
+    <div class="func"><div class="fico">👤</div><div><p class="ft">Usuario / Cambiar de usuario / Ver todos</p><p class="fd">Cada persona entra con su cuenta y ve sus registros. La administradora (Admin) puede ver los de todos con "Ver todos".</p></div></div>
+  </section>
+
+  <!-- 8 -->
+  <section id="ajustes">
+    <h2><span class="ico">⚙️</span> 8. Ajustes, explicados uno por uno</h2>
+    <p class="lead">Todo lo que puedes configurar y para qué sirve.</p>
+    <table>
+      <tr><th>Ajuste</th><th>Qué hace</th></tr>
+      <tr><td>Días laborables</td><td>Marca qué días de la semana se trabaja (por defecto lunes a sábado). Los no marcados no tienen meta.</td></tr>
+      <tr><td>Meta día completo</td><td>Horas esperadas en un día normal (8.50).</td></tr>
+      <tr><td>Meta media jornada</td><td>Horas esperadas en el día corto (5.50, el sábado).</td></tr>
+      <tr><td>Día de media jornada</td><td>Qué día de la semana es media jornada (por defecto sábado).</td></tr>
+      <tr><td>Tolerancia extra (min)</td><td>Minutos de más que no se cuentan como extra (por ejemplo, salir 5 min tarde). 0 = todo cuenta.</td></tr>
+      <tr><td>Pago hora normal / extra</td><td>Cuánto se paga por cada hora normal y por cada hora extra.</td></tr>
+      <tr><td>Moneda</td><td>El símbolo que aparece en el pago (S/, $, etc.).</td></tr>
+      <tr><td>Feriados de Arequipa</td><td>Añade el 15 de agosto (Aniversario de Arequipa) a los feriados.</td></tr>
+      <tr><td>Restaurar valores por defecto</td><td>Vuelve todos los ajustes a como venían de fábrica.</td></tr>
+      <tr><td>Gestionar / borrar historial</td><td>Borra un mes puntual o todo el historial. Es permanente.</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    Brighter WorkLog · Guía de uso
+    <br><a class="volver" href="index.html">← Volver a la aplicación</a>
+  </footer>
+
+</div>
+</body>
+</html>

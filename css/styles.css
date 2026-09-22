@@ -72,6 +72,21 @@ body[data-theme="vidrio"] .blob{display:none}
 body:not([data-theme="vidrio"]) .bg-carousel{display:none}
 
 #btnTema{display:inline-flex;align-items:center;gap:6px}
+/* botón esmeralda de la guía, junto a Ajustes */
+.btn-guia{text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap;
+  background:var(--teal);border:1px solid var(--teal);color:#fff;font-weight:700;font-size:13px;
+  padding:8px 13px;border-radius:9px;transition:.12s;box-shadow:0 3px 10px rgba(22,169,127,.28)}
+.btn-guia:hover{background:#128a68;border-color:#128a68}
+
+/* globito recordatorio del cambio de vista */
+.seg-wrap{position:relative}
+.reminder{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-6px);
+  background:var(--ink);color:#fff;font-size:12.5px;line-height:1.4;padding:9px 12px;border-radius:10px;
+  width:250px;box-shadow:0 10px 30px rgba(20,40,70,.28);opacity:0;pointer-events:none;transition:opacity .3s, transform .3s;z-index:40}
+.reminder b{color:#ffd9c4}
+.reminder::before{content:"";position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:7px solid transparent;border-bottom-color:var(--ink)}
+.reminder.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
 
 /* ===== glass genérico ===== */
 .glass{
