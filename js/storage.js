@@ -23,6 +23,15 @@ function loadAll(){
   catch(e){ return {}; }
 }
 
+/** cómo se guarda un día (turnos + extras + tipo manual) */
+function serializarDia(d){
+  return {
+    turnos: (d.turnos||[]).map(t => ({ ent:t.ent||"", sal:t.sal||"" })),
+    extraManual: d.extraManual, baja: d.baja, desc: d.desc, nota: d.nota,
+    tipoManual: d.tipoManual || null
+  };
+}
+
 /* caché local (siempre) */
 function guardarLocal(){
   if(!estado.empleado.trim()) return;
@@ -30,10 +39,7 @@ function guardarLocal(){
     const all = loadAll();
     all[dataKey()] = {
       empleado: estado.empleado, mes: estado.mes, anio: estado.anio,
-      dias: estado.dias.map(d => ({
-        ent:d.ent, sal:d.sal, ent2:d.ent2, sal2:d.sal2,
-        extraManual:d.extraManual, baja:d.baja, desc:d.desc, nota:d.nota
-      }))
+      dias: estado.dias.map(serializarDia)
     };
     localStorage.setItem(LS_DATA, JSON.stringify(all));
   }catch(e){}
@@ -49,10 +55,7 @@ function saveEstado(){
     setSaved("Guardando…");
     clearTimeout(_saveTimer);
     const emp = estado.empleado, an = estado.anio, me = estado.mes;
-    const dias = estado.dias.map(d => ({
-      ent:d.ent, sal:d.sal, ent2:d.ent2, sal2:d.sal2,
-      extraManual:d.extraManual, baja:d.baja, desc:d.desc, nota:d.nota
-    }));
+    const dias = estado.dias.map(serializarDia);
     _saveTimer = setTimeout(async () => {
       const ok = await cloudGuardarRegistro(emp, an, me, dias);
       setSaved(ok ? "Guardado en la nube ✓ " + _hora() : "Guardado local (sin nube)");

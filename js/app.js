@@ -79,9 +79,41 @@ function init(){
   document.getElementById("btnLogin").onclick  = () => accionAuth("in");
   document.getElementById("btnSignup").onclick = () => accionAuth("up");
   document.getElementById("btnCerrarAdmin").onclick = () => document.getElementById("dlgAdmin").close();
+  document.getElementById("btnHistorial").onclick   = abrirHistorial;
+  document.getElementById("btnCerrarHist").onclick  = () => document.getElementById("dlgHistorial").close();
+  document.getElementById("btnCerrarTipo").onclick  = () => document.getElementById("dlgTipo").close();
 
   // la app arranca después de resolver la sesión (auth.js)
   initAuth();
+}
+
+/** historial de meses guardados */
+async function abrirHistorial(){
+  const dlg = document.getElementById("dlgHistorial");
+  const cont = document.getElementById("histLista");
+  cont.innerHTML = "<p class='hint'>Cargando…</p>";
+  dlg.showModal();
+  let filas = [];
+  if(MODO_NUBE){ filas = await cloudListarMisRegistros(); }
+  else {
+    const all = loadAll();
+    filas = Object.values(all).map(r => ({ empleado:r.empleado, anio:r.anio, mes:r.mes }));
+  }
+  if(!filas.length){ cont.innerHTML = "<p class='hint'>Todavía no hay meses guardados.</p>"; return; }
+  cont.innerHTML = "";
+  filas.forEach(f => {
+    const row = document.createElement("button");
+    row.className = "admin-row";
+    row.innerHTML = `<span><b>${f.empleado}</b> · ${MESES[f.mes]} ${f.anio}</span><span class="admin-quien">abrir</span>`;
+    row.onclick = () => {
+      document.getElementById("fEmpleado").value = f.empleado;
+      document.getElementById("fMes").value = f.mes;
+      document.getElementById("fAnio").value = f.anio;
+      dlg.close();
+      generarMes(true);
+    };
+    cont.appendChild(row);
+  });
 }
 
 /** llamado por auth.js una vez resuelto el inicio de sesión (o modo local) */

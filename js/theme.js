@@ -9,7 +9,7 @@
 
 const LS_THEME = "bwl_theme_v1";
 const TEMAS = ["vidrio", "claro", "oscuro"];
-const TEMA_LBL = { vidrio:"Vidrio", claro:"Claro", oscuro:"Oscuro" };
+const TEMA_LBL = { vidrio:"Fondo 1", claro:"Fondo 2", oscuro:"Fondo 3" };
 const ICONO_TEMA = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18 4 4 0 0 0 0-8 3 3 0 0 1 0-6z"/></svg>';
 
 /* fondos del carrusel (tema vidrio). 5.svg se omite por su peso (~37 MB);
@@ -57,7 +57,7 @@ function iniciarCarruselFondo(){
     slides[_bgIdx].classList.remove("on");
     _bgIdx = (_bgIdx + 1) % slides.length;
     slides[_bgIdx].classList.add("on");
-  }, 7000);
+  }, 13000);
 }
 
 function detenerCarruselFondo(){

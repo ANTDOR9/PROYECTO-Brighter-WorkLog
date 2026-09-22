@@ -285,6 +285,50 @@ dialog::backdrop{background:rgba(20,30,45,.4);-webkit-backdrop-filter:blur(3px);
 .admin-row:hover{border-color:var(--brand);background:#fff8f4}
 .admin-quien{color:var(--muted);font-size:11.5px;font-weight:600}
 
+/* ===== turnos (entrada–salida dinámicos) ===== */
+.turnos,.cal-turnos{display:flex;flex-direction:column;gap:5px}
+.turno,.cal-turno{display:flex;align-items:center;gap:5px}
+.tsep{color:var(--muted);font-weight:700}
+.tinp{border:1px solid var(--line);border-radius:8px;padding:5px 6px;font-family:inherit;font-size:12.5px;
+  background:rgba(255,255,255,.9);color:var(--ink);width:104px}
+.tinp:focus,.cal-time:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.tadd{align-self:flex-start;background:var(--brand-soft);border:1px dashed var(--brand-b,#f2a980);
+  color:var(--brand-ink);font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px}
+.tadd:hover{background:#fde0d0}
+.tdel{width:22px;height:22px;padding:0;border-radius:6px;border:1px solid var(--line);background:#fff;
+  color:var(--red);font-weight:800;line-height:1;font-size:14px}
+.tdel:hover{background:#fdecea;border-color:var(--domingo-b)}
+.col-turnos{min-width:250px}
+table{min-width:1040px}
+
+/* chip de tipo de día */
+.tipo-chip,.cal-chip{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;
+  border:1px solid transparent;cursor:pointer;transition:.12s}
+.tipo-chip:hover,.cal-chip:hover{filter:brightness(.96);box-shadow:0 0 0 2px rgba(0,0,0,.05)}
+.tc-completo{background:var(--brand-soft);color:var(--brand-ink);border-color:#f2c9b3}
+.tc-sabado{background:var(--sabado);color:#0a6b4f;border-color:var(--sabado-b)}
+.tc-domingo{background:var(--domingo);color:#a53434;border-color:var(--domingo-b)}
+.tc-feriado{background:var(--feriado);color:#b5741a;border-color:var(--feriado-b)}
+.dia-nombre{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:3px}
+tr.tipo-manual .tipo-chip::after{content:" •";color:var(--brand)}
+
+/* ===== foco de tarjeta (calendario) ===== */
+.cal-track.modo-foco .cal-card{opacity:.45;filter:saturate(.9)}
+.cal-track.modo-foco .cal-card.activa{opacity:1;filter:none;flex-basis:300px;transform:scale(1.03);
+  box-shadow:0 10px 40px rgba(20,40,70,.22), 0 0 0 2px var(--brand)}
+.cal-card.activa{position:relative;z-index:2}
+.cal-cerrar{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;padding:0;
+  border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:800;line-height:1;z-index:3}
+.cal-cerrar:hover{color:var(--red);border-color:var(--domingo-b)}
+.cal-card:not(.cal-cierre){cursor:pointer}
+
+/* aviso del cambio de tipo de día */
+.aviso{background:#fff7ef;border:1px solid var(--feriado-b);border-radius:12px;padding:12px 14px;
+  font-size:12.5px;color:#5a4a38;line-height:1.5;margin-bottom:14px}
+.aviso b{color:var(--ink)}
+.tipo-btns{display:flex;flex-direction:column;gap:8px}
+.tipo-btns button{text-align:left;font-weight:700}
+
 /* ===== impresión ===== */
 @media print{
   .bg,.topbar,.toolbar,.toolbar-mini,.pull-hint,.cal-head .cal-nav,#vistaCalendario,.hint{display:none !important}

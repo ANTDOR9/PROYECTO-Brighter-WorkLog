@@ -43,9 +43,13 @@ function ocultarAuth(){ document.getElementById("authOverlay").classList.add("oc
 function authError(msg){ const e=document.getElementById("authMsg"); e.textContent = msg || ""; e.style.color="var(--red)"; }
 function authInfo(msg){ const e=document.getElementById("authMsg"); e.textContent = msg || ""; e.style.color="var(--teal)"; }
 
-/** convierte un usuario simple en un correo interno para Supabase */
+/** convierte lo escrito en un correo para Supabase.
+    - si ya trae "@", se usa tal cual (correo completo)
+    - si es solo un nombre de usuario, se le agrega @brighter.local */
 function usuarioAEmail(u){
-  return u.trim().toLowerCase().replace(/[^a-z0-9._-]/g, "") + "@brighter.local";
+  u = u.trim().toLowerCase();
+  if(u.includes("@")) return u;
+  return u.replace(/[^a-z0-9._-]/g, "") + "@brighter.local";
 }
 
 async function accionAuth(tipo){   // 'in' | 'up'
@@ -127,8 +131,8 @@ async function abrirRegistroDe(f){
   for(let i=1;i<=ndias;i++){
     const dow = new Date(estado.anio, estado.mes, i).getDay();
     const g = (reg && reg.dias && reg.dias[i-1]) ? reg.dias[i-1] : {};
-    estado.dias.push({ dia:i, dow, ent:g.ent||"", sal:g.sal||"", ent2:g.ent2||"", sal2:g.sal2||"",
-      extraManual:(g.extraManual!==undefined?g.extraManual:null), baja:g.baja||"", desc:g.desc||"", nota:g.nota||"" });
+    estado.dias.push({ dia:i, dow, turnos:normalizarDia(g),
+      extraManual:(g.extraManual!==undefined?g.extraManual:null), baja:g.baja||"", desc:g.desc||"", nota:g.nota||"", tipoManual:g.tipoManual||null });
   }
   _soloLectura = true;
   renderTabla(); if(typeof renderCalendario==="function") renderCalendario(); renderResumenLateral();

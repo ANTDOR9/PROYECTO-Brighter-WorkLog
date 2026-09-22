@@ -56,7 +56,7 @@ async function cloudSignOut(){
 
 async function cloudCargarPerfil(){
   if(!sb || !usuarioActual) return null;
-  const { data } = await sb.from("perfiles").select("nombre, rol").eq("id", usuarioActual.id).single();
+  const { data } = await sb.from("perfiles").select("nombre, rol").eq("id", usuarioActual.id).maybeSingle();
   perfilActual = data || { nombre:"", rol:"registrador" };
   return perfilActual;
 }
@@ -83,6 +83,16 @@ async function cloudGuardarRegistro(empleado, anio, mes, dias){
   }, { onConflict: "user_id,empleado,anio,mes" });
   if(error){ console.warn("guardar registro:", error.message); return false; }
   return true;
+}
+
+/* listar los meses guardados del usuario actual (para el historial) */
+async function cloudListarMisRegistros(){
+  if(!sb || !usuarioActual) return [];
+  const { data } = await sb.from("registros_mes")
+    .select("empleado, anio, mes, actualizado_en")
+    .eq("user_id", usuarioActual.id)
+    .order("actualizado_en", { ascending:false });
+  return data || [];
 }
 
 /* cargar un registro específico de cualquier usuario (solo admin lo logra por RLS) */

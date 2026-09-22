@@ -1,8 +1,7 @@
 /* ================= carousel.js =================
-   MODO CALENDARIO: carrusel horizontal de tarjetas glass, una por día.
-   Cada tarjeta permite registrar marcas y una nota editable.
-   Al final del mes hay una tarjeta especial de "Cierre de mes" con
-   los accesos directos de descarga.
+   MODO CALENDARIO: carrusel de tarjetas glass, una por día.
+   Turnos dinámicos, nota, cambio de tipo de día y foco (agranda la
+   tarjeta seleccionada y oscurece el resto). Tarjeta de cierre de mes.
 ============================================================ */
 "use strict";
 
@@ -14,12 +13,7 @@ const ICONO = {
   tabla: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>'
 };
 
-function chipEstado(t, fer){
-  if(fer) return `<span class="cal-chip f">${fer}</span>`;
-  if(t === "domingo") return `<span class="cal-chip d">Domingo</span>`;
-  if(t === "sabado")  return `<span class="cal-chip s">Media jornada</span>`;
-  return `<span class="cal-chip c">Jornada completa</span>`;
-}
+let _calActiva = null;   // índice de la tarjeta con foco
 
 function renderCalendario(){
   const track = document.getElementById("calTrack");
@@ -27,7 +21,6 @@ function renderCalendario(){
   const scrollPrev = track.scrollLeft;
   track.innerHTML = "";
 
-  // título del calendario
   const tit = document.getElementById("calTitulo");
   if(tit) tit.textContent = (estado.empleado.trim() || "(sin nombre)") + " · " + MESES[estado.mes] + " " + estado.anio;
 
@@ -35,32 +28,36 @@ function renderCalendario(){
     const c = calcDia(d);
     const t = tipoDia(d);
     const fer = nombreFeriado(d);
-    const editable = (t !== "domingo" && t !== "feriado");
 
     const card = document.createElement("div");
     card.className = "cal-card glass" +
-      (t === "domingo" ? " es-domingo" : t === "feriado" ? " es-feriado" : t === "sabado" ? " es-sabado" : "") +
-      (c.extra > 0 ? " con-extra" : "");
+      (t==="domingo"?" es-domingo":t==="feriado"?" es-feriado":t==="sabado"?" es-sabado":"") +
+      (c.extra>0?" con-extra":"") + (_calActiva===idx?" activa":"");
+    card.dataset.i = idx;
 
-    const marca = (f, val, ph) =>
-      `<input class="cal-time" data-i="${idx}" data-f="${f}" value="${val || ""}" placeholder="${ph}" ${editable ? "" : "disabled"}>`;
+    let turnos = '<div class="cal-turnos">';
+    d.turnos.forEach((tt, ti) => {
+      turnos +=
+        `<div class="cal-turno">
+           <input type="time" class="cal-time" data-i="${idx}" data-t="${ti}" data-k="ent" value="${tt.ent||""}">
+           <span class="tsep">–</span>
+           <input type="time" class="cal-time" data-i="${idx}" data-t="${ti}" data-k="sal" value="${tt.sal||""}">
+           ${d.turnos.length>1?`<button class="tdel" onclick="quitarTurno(${idx},${ti})" title="Quitar">×</button>`:""}
+         </div>`;
+    });
+    turnos += `<button class="tadd" onclick="agregarTurno(${idx})">+ turno</button></div>`;
 
-    const balTxt = (c.valido && c.meta > 0)
-      ? `<span class="${c.balanceDia>=0?'bal-pos':'bal-neg'}">${c.balanceDia>=0?"+":""}${fmt(c.balanceDia)} h</span>`
-      : "";
+    const balTxt = (c.valido && c.meta>0)
+      ? `<span class="${c.balanceDia>=0?'bal-pos':'bal-neg'}">${c.balanceDia>=0?"+":""}${fmt(c.balanceDia)} h</span>` : "";
 
     card.innerHTML = `
+      ${_calActiva===idx?'<button class="cal-cerrar" onclick="calFoco(null,event)">×</button>':''}
       <div class="cal-top">
         <div class="cal-dow">${DIAS[d.dow]}</div>
         <div class="cal-fecha"><span class="cal-num">${String(d.dia).padStart(2,"0")}</span><span class="cal-mes">${MESES[estado.mes].slice(0,3).toUpperCase()}</span></div>
       </div>
-      ${chipEstado(t, fer)}
-      <div class="cal-marcas">
-        <label>Entrada</label><label>Salida</label>
-        ${marca("ent", d.ent, "--:--")}${marca("sal", d.sal, "--:--")}
-        <label>Entrada 2</label><label>Salida 2</label>
-        ${marca("ent2", d.ent2, "--:--")}${marca("sal2", d.sal2, "--:--")}
-      </div>
+      <button class="cal-chip tc-${t}" onclick="abrirTipoDia(${idx})" title="Clic para cambiar el tipo de día">${tipoLabel(t)}${fer?" · "+fer:""}</button>
+      ${turnos}
       <div class="cal-horas">
         <span>${ICONO.reloj} ${c.valido ? fmt(c.trab)+" h" : "—"}</span>
         ${c.extra>0?`<span class="cal-extra">+${fmt(c.extra)} extra</span>`:""}
@@ -73,7 +70,7 @@ function renderCalendario(){
     track.appendChild(card);
   });
 
-  // ---- tarjeta especial: cierre de mes ----
+  // tarjeta de cierre de mes
   const m = calcMes();
   const cierre = document.createElement("div");
   cierre.className = "cal-card cal-cierre glass";
@@ -94,23 +91,42 @@ function renderCalendario(){
     <div class="cierre-hint">Aquí se cierran las cuentas del mes: los excesos compensan las faltas y el neto se paga como extra.</div>`;
   track.appendChild(cierre);
 
+  track.classList.toggle("modo-foco", _calActiva !== null);
   track.scrollLeft = scrollPrev;
   bindCalInputs();
 }
 
+/* foco: agranda una tarjeta y oscurece el resto */
+function calFoco(idx, ev){
+  if(ev) ev.stopPropagation();
+  _calActiva = idx;
+  renderCalendario();
+}
+
 function bindCalInputs(){
-  document.querySelectorAll("#calTrack .cal-time, #calTrack .cal-nota").forEach(inp => {
+  // clic en la tarjeta (no en inputs/botones) → foco
+  document.querySelectorAll("#calTrack .cal-card:not(.cal-cierre)").forEach(card => {
+    card.addEventListener("click", e => {
+      if(e.target.closest("input,textarea,button")) return;
+      calFoco(+card.dataset.i, e);
+    });
+  });
+  document.querySelectorAll("#calTrack .cal-time").forEach(inp => {
     inp.addEventListener("change", e => {
-      const track = document.getElementById("calTrack");
-      const sp = track.scrollLeft;
+      const sp = document.getElementById("calTrack").scrollLeft;
+      aplicarTurno(+e.target.dataset.i, +e.target.dataset.t, e.target.dataset.k, e.target.value);
+      refrescar(); document.getElementById("calTrack").scrollLeft = sp;
+    });
+  });
+  document.querySelectorAll("#calTrack .cal-nota").forEach(inp => {
+    inp.addEventListener("change", e => {
+      const sp = document.getElementById("calTrack").scrollLeft;
       aplicarEdicion(+e.target.dataset.i, e.target.dataset.f, e.target.value);
-      refrescar();
-      track.scrollLeft = sp;
+      refrescar(); document.getElementById("calTrack").scrollLeft = sp;
     });
   });
 }
 
-/* navegación del carrusel */
 function calScroll(dir){
   const track = document.getElementById("calTrack");
   const card = track.querySelector(".cal-card");

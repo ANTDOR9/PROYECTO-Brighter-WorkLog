@@ -55,7 +55,11 @@
         </div>
         <div class="field">
           <label>&nbsp;</label>
-          <button class="primary" id="btnGenerar">Generar mes</button>
+          <button class="primary" id="btnGenerar" title="Crea o abre la grilla de ese mes (no guarda: el guardado es automático)">Abrir / crear mes</button>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button id="btnHistorial" title="Ver los meses ya guardados">🕘 Historial</button>
         </div>
         <div class="spacer"></div>
         <span class="savednote" id="savedNote"></span>
@@ -109,8 +113,8 @@
               <table id="tabla">
                 <thead>
                   <tr>
-                    <th class="col-dia" style="text-align:left">Día</th>
-                    <th>Fecha</th><th>Entrada</th><th>Salida</th><th>Entrada 2</th><th>Salida 2</th>
+                    <th class="col-dia" style="text-align:left">Día / Tipo</th>
+                    <th>Turnos (entrada – salida)</th>
                     <th>H. Trab.</th><th>H. Normales</th><th>H. Extras</th><th>H. Baja</th>
                     <th>Descripción</th><th>Total</th><th>Balance</th>
                   </tr>
@@ -118,7 +122,7 @@
                 <tbody id="tbody"></tbody>
                 <tfoot>
                   <tr>
-                    <td class="lbl" colspan="6">Totales del mes</td>
+                    <td class="lbl" colspan="2">Totales del mes</td>
                     <td class="calc" id="tTrab">0.00</td>
                     <td class="calc" id="tNorm">0.00</td>
                     <td class="calc" id="tExtra">0.00</td>
@@ -221,6 +225,43 @@
     <div id="adminLista" class="admin-lista"></div>
     <div class="row" style="justify-content:flex-end;margin-top:12px">
       <button id="btnCerrarAdmin">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===== Diálogo: cambiar tipo de día ===== -->
+<dialog id="dlgTipo">
+  <div class="modal-b">
+    <h3>Cambiar el tipo de día</h3>
+    <p class="hint" id="tipoDiaActual" style="margin-top:0"></p>
+    <div class="aviso">
+      <b>El precio por hora es el mismo</b> en todos los tipos. Lo que cambia es la <b>meta de horas del día</b>,
+      es decir, <b>a partir de cuántas horas empiezan a contar las extras</b>:
+      <ul style="margin:8px 0 0;padding-left:18px">
+        <li><b>Jornada completa</b>: meta 8.50 h. Ejemplo: trabaja 9 h → 8.50 normales + 0.50 extra.</li>
+        <li><b>Media jornada</b>: meta 5.50 h. Ejemplo: trabaja 6 h → 5.50 normales + 0.50 extra.</li>
+        <li><b>No laborable</b> (domingo/feriado): meta 0. Todo lo trabajado cuenta como extra.</li>
+      </ul>
+    </div>
+    <div class="tipo-btns">
+      <button class="tc-completo" onclick="setTipoDia('completo')">Jornada completa</button>
+      <button class="tc-sabado" onclick="setTipoDia('sabado')">Media jornada</button>
+      <button class="tc-domingo" onclick="setTipoDia('domingo')">No laborable</button>
+    </div>
+    <div class="row" style="justify-content:space-between;margin-top:12px">
+      <button onclick="setTipoDia('auto')" title="Volver al tipo que corresponde por calendario">↺ Automático</button>
+      <button id="btnCerrarTipo">Cancelar</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===== Diálogo: historial de meses ===== -->
+<dialog id="dlgHistorial">
+  <div class="modal-b">
+    <h3>Historial de meses guardados</h3>
+    <div id="histLista" class="admin-lista"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:12px">
+      <button id="btnCerrarHist">Cerrar</button>
     </div>
   </div>
 </dialog>
