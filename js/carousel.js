@@ -91,7 +91,8 @@ function renderCalendario(){
     <div class="cierre-btns">
       <button class="btn-glass" onclick="exportarExcel()">${ICONO.descargar} Excel</button>
       <button class="btn-glass" onclick="descargarPDF()">${ICONO.descargar} PDF</button>
-      <button class="btn-glass" onclick="enviarPorCorreo()">${ICONO.imprimir} Enviar por correo</button>
+      <button class="btn-glass" onclick="imprimir()">${ICONO.imprimir} Imprimir</button>
+      <button class="btn-glass" onclick="enviarPorCorreo()">✉ Enviar por correo</button>
     </div>
     <div class="cierre-hint">Aquí se cierran las cuentas del mes: los excesos compensan las faltas y el neto se paga como extra.</div>`;
   track.appendChild(cierre);
