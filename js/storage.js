@@ -23,6 +23,17 @@ function loadAll(){
   catch(e){ return {}; }
 }
 
+/* borrar del respaldo local */
+function borrarLocalRegistro(empleado, anio, mes){
+  try{
+    const all = loadAll();
+    const u = usuarioActual ? usuarioActual.id : "local";
+    delete all[u + "||" + empleado.trim().toUpperCase() + "||" + anio + "-" + mes];
+    localStorage.setItem(LS_DATA, JSON.stringify(all));
+  }catch(e){}
+}
+function borrarLocalTodo(){ try{ localStorage.removeItem(LS_DATA); }catch(e){} }
+
 /** cómo se guarda un día (turnos + extras + tipo manual) */
 function serializarDia(d){
   return {

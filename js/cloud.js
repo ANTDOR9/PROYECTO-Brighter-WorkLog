@@ -95,6 +95,22 @@ async function cloudListarMisRegistros(){
   return data || [];
 }
 
+/* borrar un registro (mes) del usuario actual */
+async function cloudBorrarRegistro(empleado, anio, mes){
+  if(!sb || !usuarioActual) return false;
+  const { error } = await sb.from("registros_mes").delete()
+    .eq("user_id", usuarioActual.id).eq("empleado", empleado.trim().toUpperCase())
+    .eq("anio", anio).eq("mes", mes);
+  return !error;
+}
+
+/* borrar TODO el historial del usuario actual */
+async function cloudBorrarTodosMisRegistros(){
+  if(!sb || !usuarioActual) return false;
+  const { error } = await sb.from("registros_mes").delete().eq("user_id", usuarioActual.id);
+  return !error;
+}
+
 /* cargar un registro específico de cualquier usuario (solo admin lo logra por RLS) */
 async function cloudCargarRegistroPorUsuario(userId, empleado, anio, mes){
   if(!sb) return null;

@@ -82,6 +82,10 @@ function init(){
   document.getElementById("btnHistorial").onclick   = abrirHistorial;
   document.getElementById("btnCerrarHist").onclick  = () => document.getElementById("dlgHistorial").close();
   document.getElementById("btnCerrarTipo").onclick  = () => document.getElementById("dlgTipo").close();
+  document.getElementById("btnRestaurar").onclick   = restaurarDefaults;
+  document.getElementById("btnGestion").onclick     = () => { document.getElementById("dlgConfig").close(); abrirGestion(); };
+  document.getElementById("btnCerrarGest").onclick  = () => document.getElementById("dlgGestion").close();
+  document.getElementById("btnBorrarTodo").onclick  = borrarTodoHistorial;
 
   // la app arranca después de resolver la sesión (auth.js)
   initAuth();
@@ -114,6 +118,40 @@ async function abrirHistorial(){
     };
     cont.appendChild(row);
   });
+}
+
+/** gestión / borrado del historial (solo desde Ajustes) */
+async function abrirGestion(){
+  const dlg = document.getElementById("dlgGestion");
+  const cont = document.getElementById("gestLista");
+  cont.innerHTML = "<p class='hint'>Cargando…</p>";
+  dlg.showModal();
+  let filas = MODO_NUBE ? await cloudListarMisRegistros()
+                        : Object.values(loadAll()).map(r => ({ empleado:r.empleado, anio:r.anio, mes:r.mes }));
+  if(!filas.length){ cont.innerHTML = "<p class='hint'>No hay registros guardados.</p>"; return; }
+  cont.innerHTML = "";
+  filas.forEach(f => {
+    const row = document.createElement("div");
+    row.className = "gest-row";
+    row.innerHTML = `<span><b>${f.empleado}</b> · ${MESES[f.mes]} ${f.anio}</span>`;
+    const del = document.createElement("button");
+    del.className = "btn-del"; del.textContent = "Borrar";
+    del.onclick = async () => {
+      if(!confirm(`¿Borrar el registro de ${f.empleado} — ${MESES[f.mes]} ${f.anio}? No se puede deshacer.`)) return;
+      if(MODO_NUBE) await cloudBorrarRegistro(f.empleado, f.anio, f.mes);
+      borrarLocalRegistro(f.empleado, f.anio, f.mes);
+      abrirGestion();
+    };
+    row.appendChild(del);
+    cont.appendChild(row);
+  });
+}
+
+async function borrarTodoHistorial(){
+  if(!confirm("¿Borrar TODO el historial de registros? Esta acción no se puede deshacer.")) return;
+  if(MODO_NUBE) await cloudBorrarTodosMisRegistros();
+  borrarLocalTodo();
+  abrirGestion();
 }
 
 /** llamado por auth.js una vez resuelto el inicio de sesión (o modo local) */

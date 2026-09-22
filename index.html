@@ -201,10 +201,14 @@
       <div class="field"><label>Pago hora extra</label><input id="cTarifaE" type="number" step="0.01" min="0"></div>
       <div class="field"><label>Moneda</label><input id="cMoneda" type="text" maxlength="4" style="min-width:70px"></div>
     </div>
-    <label class="check" style="margin-bottom:16px;display:flex;gap:8px;align-items:center;cursor:pointer">
+    <label class="check" style="margin-bottom:14px;display:flex;gap:8px;align-items:center;cursor:pointer">
       <input id="cArequipa" type="checkbox"> Incluir feriados regionales de Arequipa (15 ago)
     </label>
-    <div class="row" style="justify-content:flex-end">
+    <div class="ajustes-extra">
+      <button type="button" id="btnRestaurar">↺ Restaurar valores por defecto</button>
+      <button type="button" id="btnGestion">🗑 Gestionar / borrar historial</button>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:14px">
       <button id="btnCerrarConfig">Cancelar</button>
       <button class="primary" id="btnGuardarConfig">Guardar ajustes</button>
     </div>
@@ -261,6 +265,19 @@
     <div class="row" style="justify-content:space-between;margin-top:12px">
       <button onclick="setTipoDia('auto')" title="Volver al tipo que corresponde por calendario">↺ Automático</button>
       <button id="btnCerrarTipo">Cancelar</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===== Diálogo: gestionar / borrar historial ===== -->
+<dialog id="dlgGestion">
+  <div class="modal-b">
+    <h3>Gestionar historial</h3>
+    <p class="hint" style="margin-top:0">Borra un registro puntual o todo el historial. Esta acción no se puede deshacer.</p>
+    <div id="gestLista" class="admin-lista"></div>
+    <div class="row" style="justify-content:space-between;margin-top:12px">
+      <button id="btnBorrarTodo" class="btn-peligro">Borrar todo el historial</button>
+      <button id="btnCerrarGest">Cerrar</button>
     </div>
   </div>
 </dialog>

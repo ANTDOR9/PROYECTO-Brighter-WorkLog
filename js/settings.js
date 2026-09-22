@@ -36,6 +36,14 @@ function abrirConfig(){
   document.getElementById("dlgConfig").showModal();
 }
 
+function restaurarDefaults(){
+  if(!confirm("¿Restaurar todos los ajustes a los valores originales?")) return;
+  cfg = Object.assign({}, CFG_DEFAULT);
+  saveCfg();
+  abrirConfig();     // recarga los campos del modal con los valores por defecto
+  refrescar();
+}
+
 function guardarConfig(){
   const dias = [...document.querySelectorAll("#diasSemana button.primary")].map(b => +b.dataset.dw);
   cfg.diasLaborables    = dias.length ? dias : [1,2,3,4,5,6];
