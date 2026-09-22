@@ -108,6 +108,10 @@ body:not([data-theme="vidrio"]) .bg-carousel{display:none}
 .field input,.field select{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13.5px;
   background:rgba(255,255,255,.85);color:var(--ink);min-width:120px;font-family:inherit}
 .field input:focus,.field select:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
+/* señal sutil: mientras el nombre esté vacío, el campo late suavemente */
+@keyframes pulsoNombre{0%,100%{box-shadow:0 0 0 0 rgba(242,97,31,0)}50%{box-shadow:0 0 0 5px rgba(242,97,31,.16)}}
+#fEmpleado:placeholder-shown{border-color:var(--brand);animation:pulsoNombre 2.2s ease-in-out infinite}
+#fEmpleado:focus{animation:none}
 button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);
   border-radius:9px;padding:8px 13px;font-size:13px;font-weight:600;transition:.12s}
 button:hover{border-color:#cdd5df; background:#fafbfd}
@@ -136,14 +140,15 @@ button.ghost{background:rgba(255,255,255,.5);border-color:var(--glass-bd);color:
 .cal-nav button{width:38px;height:38px;border-radius:11px;font-size:20px;line-height:1;padding:0;
   background:var(--glass-bg);border:1px solid var(--glass-bd);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
-.cal-track{display:flex;gap:16px;overflow-x:auto;padding:6px 6px 18px;scroll-snap-type:x mandatory;
-  scroll-behavior:smooth}
+.cal-track{display:flex;align-items:flex-start;gap:16px;overflow-x:auto;padding:6px 6px 22px;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth}
 .cal-track::-webkit-scrollbar{height:10px}
 .cal-track::-webkit-scrollbar-thumb{background:rgba(30,42,58,.18);border-radius:10px}
 
 .cal-card{flex:0 0 230px;scroll-snap-align:center;border-radius:18px;padding:14px 15px;
-  display:flex;flex-direction:column;gap:10px;min-height:290px;transition:transform .18s}
-.cal-card:hover{transform:translateY(-3px)}
+  display:flex;flex-direction:column;gap:10px;min-height:290px;
+  transition:opacity .28s ease, box-shadow .28s ease, flex-basis .28s ease, transform .18s ease}
+.cal-card:not(.activa):hover{transform:translateY(-3px)}
 .cal-card.es-domingo{background:linear-gradient(180deg,rgba(253,236,235,.85),rgba(255,255,255,.6))}
 .cal-card.es-feriado{background:linear-gradient(180deg,rgba(255,242,226,.9),rgba(255,255,255,.6))}
 .cal-card.es-sabado{background:linear-gradient(180deg,rgba(231,246,240,.9),rgba(255,255,255,.6))}
@@ -313,10 +318,10 @@ table{min-width:1040px}
 tr.tipo-manual .tipo-chip::after{content:" •";color:var(--brand)}
 
 /* ===== foco de tarjeta (calendario) ===== */
-.cal-track.modo-foco .cal-card{opacity:.45;filter:saturate(.9)}
-.cal-track.modo-foco .cal-card.activa{opacity:1;filter:none;flex-basis:300px;transform:scale(1.03);
-  box-shadow:0 10px 40px rgba(20,40,70,.22), 0 0 0 2px var(--brand)}
-.cal-card.activa{position:relative;z-index:2}
+.cal-track.modo-foco .cal-card{opacity:.5}
+.cal-track.modo-foco .cal-card.activa{opacity:1;flex-basis:300px;
+  box-shadow:0 12px 40px rgba(20,40,70,.22), 0 0 0 2px var(--brand)}
+.cal-card.activa{position:relative;z-index:2;transform:none}
 .cal-cerrar{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;padding:0;
   border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:800;line-height:1;z-index:3}
 .cal-cerrar:hover{color:var(--red);border-color:var(--domingo-b)}
