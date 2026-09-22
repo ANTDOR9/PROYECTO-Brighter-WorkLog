@@ -32,6 +32,7 @@ function abrirConfig(){
   document.getElementById("cTarifaN").value      = cfg.tarifaNormal;
   document.getElementById("cTarifaE").value      = cfg.tarifaExtra;
   document.getElementById("cMoneda").value       = cfg.moneda || "S/";
+  document.getElementById("cCorreo").value       = cfg.correoDestino || "";
   document.getElementById("cArequipa").checked   = !!cfg.feriadosArequipa;
   document.getElementById("dlgConfig").showModal();
 }
@@ -54,6 +55,7 @@ function guardarConfig(){
   cfg.tarifaNormal      = parseFloat(document.getElementById("cTarifaN").value) || 0;
   cfg.tarifaExtra       = parseFloat(document.getElementById("cTarifaE").value) || 0;
   cfg.moneda            = (document.getElementById("cMoneda").value || "S/").trim();
+  cfg.correoDestino     = (document.getElementById("cCorreo").value || "").trim();
   cfg.feriadosArequipa  = document.getElementById("cArequipa").checked;
   saveCfg();
   document.getElementById("dlgConfig").close();

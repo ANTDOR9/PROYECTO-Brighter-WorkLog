@@ -38,7 +38,6 @@
     <div class="userbox" id="userBox"></div>
     <button class="ghost" id="btnTema" title="Cambiar estilo visual">Tema</button>
     <button class="ghost" id="btnConfig">⚙ Ajustes</button>
-    <a class="btn-guia" href="guia.html" target="_blank" rel="noopener" title="Cómo se cuentan las horas y el pago">❔ Cómo se cobra</a>
   </div>
 
   <!-- ===== Datos del registro (compartido) ===== -->
@@ -64,6 +63,10 @@
         <div class="field">
           <label>&nbsp;</label>
           <button id="btnHistorial" title="Ver los meses ya guardados">🕘 Historial</button>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <a class="btn-guia" href="guia.html" target="_blank" rel="noopener" title="Cómo se cuentan las horas y el pago">❔ Cómo se cobra</a>
         </div>
         <div class="spacer"></div>
         <span class="savednote" id="savedNote"></span>
@@ -91,9 +94,10 @@
     <div class="cal-track" id="calTrack"></div>
 
     <div class="toolbar glass">
-      <button class="btn-glass" onclick="exportarExcel()">⬇ Descargar Excel</button>
+      <button class="btn-glass" onclick="exportarExcel()">⬇ Excel</button>
+      <button class="btn-glass" onclick="descargarPDF()">⬇ PDF</button>
       <button class="btn-glass" onclick="imprimir()">🖨 Imprimir</button>
-      <button class="btn-glass off" title="Disponible en la Fase 3" disabled>☁ Subir a Drive</button>
+      <button class="btn-glass btn-enviar" onclick="enviarPorCorreo()">✉ Enviar por correo</button>
     </div>
   </section>
 
@@ -205,6 +209,10 @@
       <div class="field"><label>Pago hora extra</label><input id="cTarifaE" type="number" step="0.01" min="0"></div>
       <div class="field"><label>Moneda</label><input id="cMoneda" type="text" maxlength="4" style="min-width:70px"></div>
     </div>
+    <div class="field" style="margin-bottom:12px">
+      <label>Correo de destino (reportes)</label>
+      <input id="cCorreo" type="email" placeholder="correo.monitora@empresa.com" style="width:100%">
+    </div>
     <label class="check" style="margin-bottom:14px;display:flex;gap:8px;align-items:center;cursor:pointer">
       <input id="cArequipa" type="checkbox"> Incluir feriados regionales de Arequipa (15 ago)
     </label>
@@ -300,6 +308,8 @@
 <!-- ===== Scripts (orden de dependencia) ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/theme.js"></script>
 <script src="js/utils.js"></script>

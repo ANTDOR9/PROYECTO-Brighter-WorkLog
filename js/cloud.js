@@ -85,6 +85,15 @@ async function cloudGuardarRegistro(empleado, anio, mes, dias){
   return true;
 }
 
+/* enviar reporte por correo (llama a la Edge Function 'enviar-reporte') */
+async function cloudEnviarReporte(payload){
+  if(!sb) throw new Error("Sin conexión a la nube");
+  const { data, error } = await sb.functions.invoke("enviar-reporte", { body: payload });
+  if(error) throw error;
+  if(data && data.error) throw new Error(data.error);
+  return data;
+}
+
 /* listar los meses guardados del usuario actual (para el historial) */
 async function cloudListarMisRegistros(){
   if(!sb || !usuarioActual) return [];

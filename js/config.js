@@ -22,7 +22,8 @@ const CFG_DEFAULT = {
   toleranciaExtraMin:0,           // minutos de tolerancia antes de contar extra
   tarifaNormal:4.57,              // pago por hora normal
   tarifaExtra:5.50,               // pago por hora extra
-  moneda:"S/"
+  moneda:"S/",
+  correoDestino:""                // correo real al que se envían los reportes
 };
 
 /* configuración activa (se rellena en app.js tras cargar de localStorage) */
